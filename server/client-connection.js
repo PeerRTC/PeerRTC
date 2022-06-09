@@ -3,7 +3,7 @@ module.exports = {
 }
 
 const utils = require("./utils.js")
-const SHA256  = require("crypto-js/sha256")
+const sha256  = require("crypto-js/sha256")
 
 
 const ERROR_REPONSE = {"error": ""}
@@ -30,7 +30,7 @@ function registerClient(req, res){
 		}
 
 
-		hash = SHA256(key).toString()
+		hash = sha256(key).toString()
 		
 
 		// ensure that ids are unique for each client
