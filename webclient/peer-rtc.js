@@ -4,7 +4,7 @@ class PeerRTC {
 		this.serverURL = serverURL
 		this.key = this.randomKey(100, 200)
 		
-		var queryParams = `key=${key}`
+		var queryParams = `key=${this.key}`
 		if (myId != null && myId != undefined && myId.trim() != "") {
 			queryParams+=`&id=${myId}`
 		}
@@ -12,6 +12,7 @@ class PeerRTC {
 		console.log(this.id)
 	}
 
+	
 	
 
 	 getApiJSON(url){
@@ -24,10 +25,12 @@ class PeerRTC {
 
 
 	randomKey(minLen, maxLen) {
-	  const data = "abcdefghijklmnopqrstuvwxyz-_01234567890" 
+	  const data = "abcdefghijklmnopqrstuvwxyz-_0123456789" 
 	  var key = ""
-	  for(var i=0; i< Math.round(Math.random() * maxLen) + minLen ; i++){
-	  	var d = data[Math.round(Math.random() * data.length)]
+	  for(var i=0; i< Math.floor(Math.random() * maxLen) + minLen ; i++){
+	  	var index = Math.floor(Math.random() * data.length)
+	  	var d = data[index]
+	  	
 	  	if (Math.random() <= 0.5) {
 	  		d = d.toUpperCase()
 	  	}
