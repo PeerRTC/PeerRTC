@@ -2,8 +2,7 @@ class PeerRTC {
 	
 	constructor(myId, serverURL) {
 		this.serverURL = serverURL
-
-		var queryParams = `key=${this.uuidv4()}`
+		var queryParams = `key=${this.randomKey(100, 200)}`
 		if (myId != null && myId != undefined && myId.trim() != "") {
 			queryParams+=`&id=${myId}`
 		}
@@ -13,20 +12,27 @@ class PeerRTC {
 
 	
 
-	 getApiJSON(theUrl){
+	 getApiJSON(url){
 	    var xmlHttp = new XMLHttpRequest()
-	    xmlHttp.open("GET", theUrl, false)
+	    xmlHttp.open("GET", url, false)
 	    xmlHttp.send(null)
 	    return JSON.parse(xmlHttp.responseText)
 	}
 
 
 
-	uuidv4() {
-	  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-		var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-		return v.toString(16);
-	  });
+	randomKey(minLen, maxLen) {
+	  const data = "abcdefghijklmnopqrstuvwxyz-_01234567890" 
+	  var key = ""
+	  for(var i=0; i< Math.round(Math.random() * maxLen) + minLen ; i++){
+	  	var d = data[Math.round(Math.random() * data.length)]
+	  	if (Math.random() <= 0.5) {
+	  		d = d.toUpperCase()
+	  	}
+	  	key+=d
+	  }
+
+	  return key
 	}
 	
 }
