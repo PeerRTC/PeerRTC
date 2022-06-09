@@ -2,7 +2,9 @@ class PeerRTC {
 	
 	constructor(myId, serverURL) {
 		this.serverURL = serverURL
-		var queryParams = `key=${this.randomKey(100, 200)}`
+		this.key = this.randomKey(100, 200)
+		
+		var queryParams = `key=${key}`
 		if (myId != null && myId != undefined && myId.trim() != "") {
 			queryParams+=`&id=${myId}`
 		}
