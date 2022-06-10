@@ -3,9 +3,11 @@ const {ResponseBuilder} = require("./response-builder")
 
 const clients = new Map()
 
-var isClientIdsPublic = false
-function setIsClientIdsPublic(isPublic) {
-	isClientIdsPublic = isPublic
+var config = null
+
+//set the configurations for signaling
+function setConfig(c) {
+	config = c
 }
 
 function addNewClient(client){
@@ -24,8 +26,8 @@ function addNewClient(client){
 		clients.delete(client)
 	})
 
-	
 
+	
 	const metadata = {
 		client: client,
 		lastUpdateTime: utils.getNowMillis()
@@ -36,9 +38,30 @@ function addNewClient(client){
 	const res = new ResponseBuilder()
 	res.buildTypeInitial(id, metadata.lastUpdateTime)
 	client.send(res.getResponse())
+
+	clientLifeChecker(client)
 }
 
+function clientLifeChecker(client){
+	var alive = true
+	const interval = setInterval(()=>{
+		if (!alive) {
+			client.close()
+			clearInterval(interval)
+		}
+		try{
+			client.ping()
+		}catch(e){
 
+		}
+		alive = false
+	}, config.clientMaxUnreachableTime)
+
+	client.on("pong", ()=>{
+		alive = true
+		console.log("A")
+	})
+}
 
 function handleMessage(requesterId, data){
 	try{
@@ -66,7 +89,7 @@ function handleMessage(requesterId, data){
 		} else if (jsonData.type == "peerids") {
 			toId = jsonData.id
 			const ids = []
-			if (isClientIdsPublic) {
+			if (config.isClientIdsPublic) {
 				for(id of clients.keys()){
 					ids.push(id)
 				}
@@ -91,6 +114,7 @@ function handleMessage(requesterId, data){
 
 module.exports = {
 	addNewClient:addNewClient,
-	setIsClientIdsPublic:setIsClientIdsPublic
+	setConfig:setConfig
+	
 }
 
