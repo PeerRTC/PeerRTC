@@ -13,7 +13,7 @@ class PeerRTC {
 		this.currentPeerId = null
 
 		this.onmessage = null
-		this.onclose = null
+		this.oncloseP2P = null
 	}
 
 	sendData(data){
@@ -29,6 +29,14 @@ class PeerRTC {
 		
 		this.browserRTC = null
 		this.currentPeerId = null
+	}
+
+	close(){
+		closeP2P()
+		const socket = this.socket
+		if (socket != null) {
+			socket.close()
+		}
 	}
 
 	connect(peerId){
@@ -107,17 +115,21 @@ class PeerRTC {
 			sdpCallBack(iceCandidates, sdp)
 		}
 
-		const onclose = ()=>{
+		const oncloseP2P = ()=>{
 			this.closeP2P()
-			const onclose = this.onclose
-			if (onclose != null) {
-				onclose()
+			const oncloseP2P = this.oncloseP2P
+			if (oncloseP2P != null) {
+				var currentPeerId = this.currentPeerId
+				if (currentPeerId == null) {
+					currentPeerId = ""
+				}
+				oncloseP2P(currentPeerId)
 			}
 		}
 
 		
 
-		browserRTC.setCallbacks(onConnectionEstablished, onclose, onicecandididate, onmessage)
+		browserRTC.setCallbacks(onConnectionEstablished, oncloseP2P, onicecandididate, onmessage)
 		
 		if(isOffer){
 			browserRTC.createOffer()
