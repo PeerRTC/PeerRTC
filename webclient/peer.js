@@ -15,6 +15,13 @@ class PeerRTC {
 		}))
 	}
 
+	getAllClientIds(){
+		this.socket.send(JSON.stringify({
+			"type": "clientids",
+			"id": this.id
+		}))
+	}
+	
 	start(onConnect){
 		// Convert the provided server url to a web socket url
 		const webSocketURL = "ws://" + this.serverURL.replaceAll(/((http(s{0,1}))|(ws(s{0,1}))):\/\//g, "")
@@ -41,6 +48,7 @@ class PeerRTC {
 
 	handleServerData(data){
 		const jsonData = JSON.parse(data.data)
+		console.log(jsonData)
 		if (jsonData.type == "initial") {
 			this.id = jsonData.id
 			this.connectionCreationTime = jsonData.connectionCreationTime
