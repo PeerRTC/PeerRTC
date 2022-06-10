@@ -179,7 +179,7 @@ class PeerRTC {
 }
 
 
-// Wrapper class on top of buit in WebRTC api in modern browsers
+// Wrapper class on top of the built in WebRTC api in modern browsers
 class BrowserRTC{
 	constructor(){
 		const conn = new RTCPeerConnection()
