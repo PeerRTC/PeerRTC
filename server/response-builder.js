@@ -16,11 +16,11 @@ class ResponseBuilder{
 
 
 	// for building the data value in response for type initial
-	buildTypeInitial(id, connectionCreationTime){
+	buildTypeInitial(id, creationTime){
 		const response = this.response
-		response.type = ResponseBuilder.RES_TYPE_INITIAL
+		response.type = this.RES_TYPE_INITIAL
 		response.id = id
-		response.connectionCreationTime = connectionCreationTime
+		response.creationTime = creationTime
 	}
 }
 
