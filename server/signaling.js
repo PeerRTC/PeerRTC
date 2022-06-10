@@ -52,7 +52,7 @@ function handleMessage(requesterId, data){
 			// Request connection only if target exists
 			if (clients.has(peerId)) {
 				toId = peerId
-				res.buildTypeIncomingPeer(requesterId, jsonData.sdp)
+				res.buildTypeIncomingPeer(requesterId, jsonData.iceCandidates, jsonData.sdp)
 			}
 			
 		} else if (jsonData.type == "answerpeer") {
@@ -61,7 +61,7 @@ function handleMessage(requesterId, data){
 			// Send answer only if target exists
 			if (clients.has(peerId)) {
 				toId = peerId
-				res.buildTypeAnswerPeer(requesterId, jsonData.sdp)
+				res.buildTypeAnswerPeer(requesterId, jsonData.iceCandidates, jsonData.sdp)
 			}
 		} else if (jsonData.type == "peerids") {
 			toId = jsonData.id
