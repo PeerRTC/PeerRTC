@@ -11,6 +11,9 @@ class PeerRTC {
 		this.socket = null
 		this.browserRTC = null
 		this.currentPeerId = null
+
+		this.onmessage = null
+		this.onclose = null
 	}
 
 	sendData(data){
@@ -20,7 +23,10 @@ class PeerRTC {
 
 	closeP2P(){
 		const browserRTC  = this.browserRTC
-		browserRTC.close()
+		if (browserRTC != null) {
+			browserRTC.close()
+		}
+		
 		this.browserRTC = null
 		this.currentPeerId = null
 	}
@@ -91,7 +97,10 @@ class PeerRTC {
 		}
 
 		const onmessage = message => {
-			console.log(message)
+			const onmessage = this.onmessage
+			if (onmessage != null) {
+				onmessage(message)
+			}
 		}
 
 		const onicecandididate = (iceCandidates, sdp) => {
@@ -100,6 +109,10 @@ class PeerRTC {
 
 		const onclose = ()=>{
 			this.closeP2P()
+			const onclose = this.onclose
+			if (onclose != null) {
+				onclose()
+			}
 		}
 
 		
@@ -139,7 +152,7 @@ class PeerRTC {
 		 	browserRTC.setRemoteDescription(jsonData.sdp).then(o=>{
 		 		browserRTC.addIceCandidates(jsonData.iceCandidates)
 		 	}).catch(e=>{})
-		 	
+
 		} else if (jsonData.type == "peerids") {
 			const peerIdsCallback = this.onPeerIds
 			if (peerIdsCallback != null) {
@@ -162,7 +175,7 @@ class BrowserRTC{
 		this.closed = false
 	}
 
-	setCallbacks(onConnectionEstablished, onClose, onicecandidate , onmessage){
+	setCallbacks(onConnectionEstablished, onclose, onicecandidate , onmessage){
 		const conn = this.conn
 		const iceCandidates = []
 		conn.onicecandidate  = event =>{
@@ -174,7 +187,7 @@ class BrowserRTC{
 			}
 			
 		}
-		this.onclose = onClose
+		this.onclose = onclose
 
 		this.onmessage = message => {
 			onmessage(message.data)
