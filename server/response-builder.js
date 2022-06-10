@@ -44,7 +44,7 @@ class ResponseBuilder{
 	}
 
 
-	buildTypeClientIds(fromId, clientIds){
+	buildTypeClientIds(clientIds){
 		const response = this.response
 		response.type = ResponseBuilder.RES_TYPE_CLIENT_IDS
 		response.ids = clientIds
