@@ -63,7 +63,7 @@ function handleMessage(requesterId, data){
 				toId = peerId
 				res.buildTypeAnswerPeer(requesterId, jsonData.sdp)
 			}
-		} else if (jsonData.type == "clientids") {
+		} else if (jsonData.type == "peerids") {
 			toId = jsonData.id
 			const ids = []
 			if (isClientIdsPublic) {
