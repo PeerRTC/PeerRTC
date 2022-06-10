@@ -9,14 +9,27 @@ class PeerRTC {
 		this.onPeerIds = null
 		this.id = null
 		this.socket = null
+		this.browserRTC = null
+	}
+
+	sendData(data){
+		this.browserRTC.send(data)
+	}
+
+
+	closeP2P(){
+		this.browserRTC.close()
 	}
 
 	connect(peerId){
-		this.socket.send(JSON.stringify({
-			"type": PeerRTC.REQ_TYPE_CONNECT_PEER,
-			"peerId": peerId,
-			"sdp": "test sdp"
-		}))
+		this.initBrowerRTC(true, null, sdp=>{
+			this.socket.send(JSON.stringify({
+				"type": PeerRTC.REQ_TYPE_CONNECT_PEER,
+				"peerId": peerId,
+				"sdp": sdp
+			}))
+		})
+		
 	}
 
 	//retrieve all the peer ids from the server
@@ -55,6 +68,41 @@ class PeerRTC {
 
 	}
 
+
+	initBrowerRTC(isOffer, answerSdp, sdpCallBack){
+		var browserRTC  = this.browserRTC
+
+		if (browserRTC == null) {
+			browserRTC = new BrowserRTC()
+		}
+
+		this.browserRTC = browserRTC
+
+		const onConnectionEstablished = ()=>{
+			console.log("Connection established")
+		}
+
+		const onmessage = message => {
+			console.log(message)
+		}
+
+		const onicecandididate = sdp => {
+			sdpCallBack(sdp)
+			console.log(sdp)
+		}
+
+		
+
+		browserRTC.setCallbacks(onConnectionEstablished, onicecandididate, onmessage)
+		
+		if(isOffer){
+			browserRTC.createOffer()
+		} else{
+			browserRTC.createAnswer(answerSdp)
+		}
+
+	}
+
 	handleServerData(data){
 		const jsonData = JSON.parse(data.data)
 		
@@ -62,15 +110,21 @@ class PeerRTC {
 			this.id = jsonData.id
 			this.connectionCreationTime = jsonData.connectionCreationTime
 		} else if(jsonData.type == "incomingpeer"){
-			console.log(jsonData.fromId)
-			this.socket.send(JSON.stringify({
-				"type": PeerRTC.REQ_TYPE_ANSWER_PEER,
-				"peerId": jsonData.fromId,
-				"sdp": "answer sdp"
-			}))
+
+			
+			this.initBrowerRTC(false, jsonData.sdp, sdp=>{
+				this.socket.send(JSON.stringify({
+					"type": PeerRTC.REQ_TYPE_ANSWER_PEER,
+					"peerId": jsonData.fromId,
+					"sdp": sdp
+				}))
+			})
+			
+			
 		}
 
 		 else if(jsonData.type == "answerpeer"){
+		 	this.browserRTC.setRemoteDescription(jsonData.sdp)
 			console.log(jsonData.fromId)
 			console.log("answering")
 		} else if (jsonData.type == "peerids") {
@@ -81,8 +135,70 @@ class PeerRTC {
 		}
 	}
 
+}
+
+
+class BrowserRTC{
+	constructor(){
+		const conn = new RTCPeerConnection()
+		this.conn = conn
+		this.onmessage =  null
+		this.datachannel = null
+	}
+
+	setCallbacks(onConnectionEstablished, onicecandidate , onmessage){
+		const conn = this.conn
+		conn.onicecandidate  = event =>{
+			onicecandidate (conn.localDescription)
+		}
+		this.onmessage = message => {
+			onmessage(message.data)
+		}
+		this.onConnectionEstablished = onConnectionEstablished
+	}
+
+
+
+
+	createOffer(){
+		const conn = this.conn
+		const datachannel = conn.createDataChannel("Data Channel")
+		this.initDataChannel(datachannel)
+		conn.createOffer().then(o => conn.setLocalDescription(o))
+
+	}
+
+
+	createAnswer(sdp){
+		const conn = this.conn
+		conn.ondatachannel = event=> {
+			this.initDataChannel(event.channel)
+			console.log(event.channel)
+		}
+		conn.setRemoteDescription(sdp)
+		conn.createAnswer().then(o => conn.setLocalDescription(o))
+	}
+
+
+	setRemoteDescription(sdp){
+		this.conn.setRemoteDescription(sdp)
+	}
+
+	send(data){
+		this.datachannel.send(data)
+	}
 	
-	
-	
+
+	initDataChannel(channel){
+		channel.onmessage = this.onmessage
+		channel.onopen = this.onConnectionEstablished
+		this.datachannel = channel
+	}
+
+
+
+	close(){
+		this.conn.close()
+	}
 }
 
