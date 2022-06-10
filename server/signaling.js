@@ -1,8 +1,5 @@
-module.exports = {
-	addNewClient:addNewClient
-}
-
 const utils = require("./utils")
+const resBuilder = require("./response-builder")
 
 const clients = new Map()
 
@@ -24,9 +21,18 @@ function addNewClient(client){
 
 	const metadata = {
 		id: id,
-		lastTime: utils.getNowMillis()
+		lastUpdateTime: utils.getNowMillis()
 	}
 
 	clients.set(client, metadata)
 
+	const res = new resBuilder.ResponseBuilder()
+	res.buildTypeInitial(metadata.id, metadata.lastUpdateTime)
+	client.send(res.getResponse())
 }
+
+
+module.exports = {
+	addNewClient:addNewClient
+}
+
