@@ -4,7 +4,6 @@ class PeerRTC {
 		this.serverURL = serverURL
 		this.isConnectedToServer = false
 		this.socket = this.initWebSocket()
-		this.id = null
 	}
 
 
@@ -28,8 +27,9 @@ class PeerRTC {
 
 	handleServerData(data){
 		const jsonData = JSON.parse(data.data)
-		if (jsonData.type == "inital") {
+		if (jsonData.type == "initial") {
 			this.id = jsonData.id
+			this.connectionCreationTime = jsonData.connectionCreationTime
 		}
 	}
 
