@@ -74,10 +74,8 @@ class PeerRTC {
 		const webSocketURL = "ws://" + this.serverURL.replaceAll(/((http(s{0,1}))|(ws(s{0,1}))):\/\//g, "")
 
 		new Promise(async(resolve)=>{
-			const socket = new WebSocket(webSocketURL, myId)
+			const socket = new WebSocket(webSocketURL)
 			this.socket = socket
-
-			
 
 			socket.onopen= ()=>{
 				this.isConnectedToServer = true
@@ -90,6 +88,7 @@ class PeerRTC {
 				}
 				resolve()
 			}
+
 		}).then(()=>onConnect(this))
 
 	}
