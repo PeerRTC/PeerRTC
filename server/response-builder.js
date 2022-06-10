@@ -4,6 +4,7 @@ class ResponseBuilder{
 	static RES_TYPE_INITIAL = "initial"
 	static RES_TYPE_INCOMING_PEER = "incomingpeer"
 	static RES_TYPE_ANSWER_PEER = "answerpeer"
+	static RES_TYPE_CLIENT_IDS = "clientids"
 
 	constructor(){
 		this.response = {}
@@ -40,6 +41,13 @@ class ResponseBuilder{
 		response.type = ResponseBuilder.RES_TYPE_ANSWER_PEER
 		response.fromId = fromId
 		response.sdp = sdpData
+	}
+
+
+	buildTypeClientIds(fromId, clientIds){
+		const response = this.response
+		response.type = ResponseBuilder.RES_TYPE_CLIENT_IDS
+		response.ids = clientIds
 	}
 }
 
