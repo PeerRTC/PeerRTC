@@ -1,25 +1,17 @@
-const client = require("./client-connection.js")
-const express = require("express")
-const server = express()
+const HOST = "127.0.0.1"
+const PORT = 1000
 
-// for enabling CORS
-const cors = require("cors")
-
+const ws = require("ws")
+const signaling = require("./signaling.js")
 
 
-server.get("/registerClient", cors(), (req, res)=>{
-	client.registerClient(req, res)
+const wsserver = new ws.Server({host:HOST, port:PORT})
+
+// If true,  all client ids are retrievable in the client side
+signaling.setIsClientIdsPublic(true)
+
+
+wsserver.on("connection", client=>{
+	signaling.addNewClient(client)
 })
 
-server.get("/hook", cors(), async(req, res)=>{
-	await new Promise(r => setTimeout(r, 2000))
-	res.send({"data":"hello"})
-})
-
-server.get("/initiateConnect", cors(), (req, res)=>{
-	res.send("")
-})
-
-server.listen(3000, "127.0.0.1", ()=>{
-	console.log("listen")
-})
