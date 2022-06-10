@@ -3,7 +3,7 @@ class PeerRTC {
 	static REQ_TYPE_ANSWER_PEER = "answerpeer"
 	static REQ_TYPE_PEER_IDS = "peerids"
 
-	constructor(myId, serverURL, onConnectToServer) {	
+	constructor(serverURL, onConnectToServer) {	
 		this.serverURL = serverURL
 		this.isConnectedToServer = false
 		this.onPeerIds = null
@@ -33,11 +33,13 @@ class PeerRTC {
 	}
 
 	close(){
-		closeP2P()
+		this.closeP2P()
 		const socket = this.socket
 		const onclose = this.onclose
 		if (socket != null && onclose) {
 			this.socket = null
+			this.id = null
+
 			socket.close()
 			onclose()
 		}
@@ -70,20 +72,22 @@ class PeerRTC {
 	start(onConnect){
 		// Convert the provided server url to a web socket url
 		const webSocketURL = "ws://" + this.serverURL.replaceAll(/((http(s{0,1}))|(ws(s{0,1}))):\/\//g, "")
+
 		new Promise(async(resolve)=>{
-			const socket = new WebSocket(webSocketURL)
+			const socket = new WebSocket(webSocketURL, myId)
 			this.socket = socket
 
-			socket.onclose =()=>{
-				cclose()
-			}
-
-			socket.onmessage = data=>{
-				this.handleServerData(data)
-			}
+			
 
 			socket.onopen= ()=>{
 				this.isConnectedToServer = true
+				socket.onclose =()=>{
+					this.close()
+				}
+
+				socket.onmessage = data=>{
+					this.handleServerData(data)
+				}
 				resolve()
 			}
 		}).then(()=>onConnect(this))
