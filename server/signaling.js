@@ -27,6 +27,6 @@ function addNewClient(client){
 		lastTime: utils.getNowMillis()
 	}
 
-	clients.set(client, ws)
-	
+	clients.set(client, metadata)
+
 }
