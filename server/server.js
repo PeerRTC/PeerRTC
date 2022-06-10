@@ -1,25 +1,29 @@
-const client = require("./client-connection.js")
-const express = require("express")
-const server = express()
+const ws = require("ws")
+const utils = require("./utils")
 
-// for enabling CORS
-const cors = require("cors")
+const server = new ws.Server({port:1000})
+const clients = new Map()
 
+server.on("connection", client=>{
+	var id = null
 
+	// prevent id duplicates
+	while(id == null || clients.has(id)){
+		id = utils.uuidv4()
+	}
 
-server.get("/registerClient", cors(), (req, res)=>{
-	client.registerClient(req, res)
-})
+	const metadata = {
+		id: id,
+		lastTime: getNowMillis()
+	}
 
-server.get("/hook", cors(), async(req, res)=>{
-	await new Promise(r => setTimeout(r, 2000))
-	res.send({"data":"hello"})
-})
+	clients.set(client, ws)
 
-server.get("/initiateConnect", cors(), (req, res)=>{
-	res.send("")
-})
+	client.on("message", data=>{
 
-server.listen(3000, "127.0.0.1", ()=>{
-	console.log("listen")
+	})
+
+	client.on("close", () => {
+		clients.delete(client)
+	})
 })
