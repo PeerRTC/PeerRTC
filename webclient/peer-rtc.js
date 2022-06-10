@@ -9,11 +9,17 @@ class PeerRTC {
 			queryParams+=`&id=${myId}`
 		}
 		this.id = this.getApiJSON(`${serverURL}/registerClient?${queryParams}`).id
-		console.log(this.id)
+		this.getHook()
 	}
 
 	
-	
+	getHook(){
+		new Promise(r=>{
+			while(true){
+				console.log(this.getApiJSON(`${this.serverURL}/hook`))
+			}
+		})
+	}
 
 	 getApiJSON(url){
 	    var xmlHttp = new XMLHttpRequest()
