@@ -14,7 +14,7 @@ server.on("connection", client=>{
 
 	const metadata = {
 		id: id,
-		lastTime: getNowMillis()
+		lastTime: utils.getNowMillis()
 	}
 
 	clients.set(client, ws)
