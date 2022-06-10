@@ -14,6 +14,7 @@ class PeerRTC {
 
 		this.onmessage = null
 		this.oncloseP2P = null
+		this.onclose = null
 	}
 
 	sendData(data){
@@ -34,8 +35,11 @@ class PeerRTC {
 	close(){
 		closeP2P()
 		const socket = this.socket
-		if (socket != null) {
+		const onclose = this.onclose
+		if (socket != null && onclose) {
+			this.socket = null
 			socket.close()
+			onclose()
 		}
 	}
 
@@ -71,7 +75,7 @@ class PeerRTC {
 			this.socket = socket
 
 			socket.onclose =()=>{
-				console.log("closed")
+				cclose()
 			}
 
 			socket.onmessage = data=>{
@@ -81,7 +85,6 @@ class PeerRTC {
 			socket.onopen= ()=>{
 				this.isConnectedToServer = true
 				resolve()
-				console.log("opened")
 			}
 		}).then(()=>onConnect(this))
 
