@@ -11,7 +11,10 @@ server.get("/registerClient", cors(), (req, res)=>{
 	client.registerClient(req, res)
 })
 
-
+server.get("/hook", cors(), async(req, res)=>{
+	await new Promise(r => setTimeout(r, 2000))
+	res.send({"data":"hello"})
+})
 
 server.get("/initiateConnect", cors(), (req, res)=>{
 	res.send("")
