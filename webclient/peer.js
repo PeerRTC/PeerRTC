@@ -9,7 +9,7 @@ class PeerRTC {
 
 
 	initWebSocket(){
-		// Convert the provided server url to web socket url
+		// Convert the provided server url to a web socket url
 		const webSocketURL = "ws://" + this.serverURL.replaceAll(/((http(s{0,1}))|(ws(s{0,1}))):\/\//g, "")
 		
 		const socket = new WebSocket(webSocketURL)
