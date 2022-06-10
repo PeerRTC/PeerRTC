@@ -49,8 +49,8 @@ function handleMessage(requesterId, data){
 		if (jsonData.type == "connectpeer") {
 			const peerId = jsonData.peerId
 
-			// Request connection only if not connecting to itself or peer target exists
-			if (requesterId != peerId && clients.has(peerId)) {
+			// Request connection only if target exists
+			if (clients.has(peerId)) {
 				toId = peerId
 				res.buildTypeIncomingPeer(requesterId, jsonData.sdp)
 			}
@@ -58,8 +58,8 @@ function handleMessage(requesterId, data){
 		} else if (jsonData.type == "answerpeer") {
 			const peerId = jsonData.peerId
 
-			// Send answer only if not connecting to itself or target exists
-			if (requesterId != peerId && clients.has(peerId)) {
+			// Send answer only if target exists
+			if (clients.has(peerId)) {
 				toId = peerId
 				res.buildTypeAnswerPeer(requesterId, jsonData.sdp)
 			}
