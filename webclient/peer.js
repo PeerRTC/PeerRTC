@@ -15,7 +15,7 @@ class PeerRTC {
 		}))
 	}
 
-	getAllClientIds(){
+	getAllPeerIds(){
 		this.socket.send(JSON.stringify({
 			"type": "clientids",
 			"id": this.id
