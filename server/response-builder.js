@@ -27,19 +27,21 @@ class ResponseBuilder{
 
 
 	// for building the response for type sdp
-	buildTypeIncomingPeer(fromId, sdpData){
+	buildTypeIncomingPeer(fromId, iceCandidates, sdpData){
 		const response = this.response
 		response.type = ResponseBuilder.RES_TYPE_INCOMING_PEER
 		response.fromId = fromId
+		response.iceCandidates = iceCandidates
 		response.sdp = sdpData
 	}
 
 
 	// for building the response for type sdp
-	buildTypeAnswerPeer(fromId, sdpData){
+	buildTypeAnswerPeer(fromId, iceCandidates, sdpData){
 		const response = this.response
 		response.type = ResponseBuilder.RES_TYPE_ANSWER_PEER
 		response.fromId = fromId
+		response.iceCandidates = iceCandidates
 		response.sdp = sdpData
 	}
 

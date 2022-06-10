@@ -10,6 +10,7 @@ class PeerRTC {
 		this.id = null
 		this.socket = null
 		this.browserRTC = null
+		this.currentPeerId = null
 	}
 
 	sendData(data){
@@ -18,14 +19,18 @@ class PeerRTC {
 
 
 	closeP2P(){
-		this.browserRTC.close()
+		const browserRTC  = this.browserRTC
+		browserRTC.close()
+		this.browserRTC = null
+		this.currentPeerId = null
 	}
 
 	connect(peerId){
-		this.initBrowerRTC(true, null, sdp=>{
+		this.initBrowerRTC(peerId, true, null, (iceCandidates, sdp)=>{
 			this.socket.send(JSON.stringify({
 				"type": PeerRTC.REQ_TYPE_CONNECT_PEER,
 				"peerId": peerId,
+				"iceCandidates": iceCandidates,
 				"sdp": sdp
 			}))
 		})
@@ -69,11 +74,14 @@ class PeerRTC {
 	}
 
 
-	initBrowerRTC(isOffer, answerSdp, sdpCallBack){
+	initBrowerRTC(targetPeerId, isOffer, answerSdp, sdpCallBack){
 		var browserRTC  = this.browserRTC
 
 		if (browserRTC == null) {
 			browserRTC = new BrowserRTC()
+		} else if (targetPeerId != this.currentPeerId) {
+			// ensures that only the current peer id is able to update the current connection
+			return
 		}
 
 		this.browserRTC = browserRTC
@@ -86,14 +94,17 @@ class PeerRTC {
 			console.log(message)
 		}
 
-		const onicecandididate = sdp => {
-			sdpCallBack(sdp)
-			console.log(sdp)
+		const onicecandididate = (iceCandidates, sdp) => {
+			sdpCallBack(iceCandidates, sdp)
+		}
+
+		const onclose = ()=>{
+			this.closeP2P()
 		}
 
 		
 
-		browserRTC.setCallbacks(onConnectionEstablished, onicecandididate, onmessage)
+		browserRTC.setCallbacks(onConnectionEstablished, onclose, onicecandididate, onmessage)
 		
 		if(isOffer){
 			browserRTC.createOffer()
@@ -110,12 +121,12 @@ class PeerRTC {
 			this.id = jsonData.id
 			this.connectionCreationTime = jsonData.connectionCreationTime
 		} else if(jsonData.type == "incomingpeer"){
-
-			
-			this.initBrowerRTC(false, jsonData.sdp, sdp=>{
+			this.initBrowerRTC(jsonData.fromId, false, jsonData.sdp, (iceCandidates, sdp)=>{
+				this.browserRTC.addIceCandidates(jsonData.iceCandidates)
 				this.socket.send(JSON.stringify({
 					"type": PeerRTC.REQ_TYPE_ANSWER_PEER,
 					"peerId": jsonData.fromId,
+					"iceCandidates": iceCandidates,
 					"sdp": sdp
 				}))
 			})
@@ -124,9 +135,11 @@ class PeerRTC {
 		}
 
 		 else if(jsonData.type == "answerpeer"){
-		 	this.browserRTC.setRemoteDescription(jsonData.sdp)
-			console.log(jsonData.fromId)
-			console.log("answering")
+		 	const browserRTC = this.browserRTC
+		 	browserRTC.setRemoteDescription(jsonData.sdp).then(o=>{
+		 		browserRTC.addIceCandidates(jsonData.iceCandidates)
+		 	}).catch(e=>{})
+		 	
 		} else if (jsonData.type == "peerids") {
 			const peerIdsCallback = this.onPeerIds
 			if (peerIdsCallback != null) {
@@ -138,19 +151,31 @@ class PeerRTC {
 }
 
 
+// Wrapper class on top of buit in WebRTC api in modern browsers
 class BrowserRTC{
 	constructor(){
 		const conn = new RTCPeerConnection()
 		this.conn = conn
 		this.onmessage =  null
 		this.datachannel = null
+		this.onclose = null
+		this.closed = false
 	}
 
-	setCallbacks(onConnectionEstablished, onicecandidate , onmessage){
+	setCallbacks(onConnectionEstablished, onClose, onicecandidate , onmessage){
 		const conn = this.conn
+		const iceCandidates = []
 		conn.onicecandidate  = event =>{
-			onicecandidate (conn.localDescription)
+			const iceCandidate = event.candidate
+			if (iceCandidate == null) {
+				onicecandidate (iceCandidates, conn.localDescription)
+			} else{
+				iceCandidates.push(iceCandidate)
+			}
+			
 		}
+		this.onclose = onClose
+
 		this.onmessage = message => {
 			onmessage(message.data)
 		}
@@ -164,7 +189,7 @@ class BrowserRTC{
 		const conn = this.conn
 		const datachannel = conn.createDataChannel("Data Channel")
 		this.initDataChannel(datachannel)
-		conn.createOffer().then(o => conn.setLocalDescription(o))
+		conn.createOffer().then(o => conn.setLocalDescription(o)).catch(e=>{})
 
 	}
 
@@ -173,15 +198,14 @@ class BrowserRTC{
 		const conn = this.conn
 		conn.ondatachannel = event=> {
 			this.initDataChannel(event.channel)
-			console.log(event.channel)
 		}
 		conn.setRemoteDescription(sdp)
-		conn.createAnswer().then(o => conn.setLocalDescription(o))
+		conn.createAnswer().then(o => conn.setLocalDescription(o)).catch(e=>{})
 	}
 
 
 	setRemoteDescription(sdp){
-		this.conn.setRemoteDescription(sdp)
+		return this.conn.setRemoteDescription(sdp)
 	}
 
 	send(data){
@@ -189,16 +213,32 @@ class BrowserRTC{
 	}
 	
 
+	addIceCandidates(candidates){
+		for(var candidate of candidates){
+			this.conn.addIceCandidate(candidate)
+		}
+	}
+
+
 	initDataChannel(channel){
 		channel.onmessage = this.onmessage
 		channel.onopen = this.onConnectionEstablished
+		channel.onclose= this.onclose
 		this.datachannel = channel
 	}
 
 
 
 	close(){
-		this.conn.close()
+		if (!this.closed) {
+			this.closed  = true
+			this.conn.close()
+			const datachannel = this.datachannel
+			if (datachannel!= null) {
+				datachannel.close()
+			}
+		}
+		
 	}
 }
 
