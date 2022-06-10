@@ -59,7 +59,6 @@ function clientLifeChecker(client){
 
 	client.on("pong", ()=>{
 		alive = true
-		console.log("A")
 	})
 }
 
