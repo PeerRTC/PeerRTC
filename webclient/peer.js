@@ -1,10 +1,14 @@
 class PeerRTC {
 	static REQ_TYPE_CONNECT_PEER = "connectpeer"
 	static REQ_TYPE_ANSWER_PEER = "answerpeer"
+	static REQ_TYPE_PEER_IDS = "peerids"
 
 	constructor(myId, serverURL, onConnectToServer) {	
 		this.serverURL = serverURL
 		this.isConnectedToServer = false
+		this.onPeerIds = null
+		this.id = null
+		this.socket = null
 	}
 
 	connect(peerId){
@@ -15,12 +19,17 @@ class PeerRTC {
 		}))
 	}
 
-	getAllPeerIds(){
+	//retrieve all the peer ids from the server
+	getAllPeerIds(callback){
+		this.onPeerIds = callback
 		this.socket.send(JSON.stringify({
-			"type": "clientids",
+			"type": PeerRTC.REQ_TYPE_PEER_IDS,
 			"id": this.id
 		}))
 	}
+
+
+
 	
 	start(onConnect){
 		// Convert the provided server url to a web socket url
@@ -48,7 +57,7 @@ class PeerRTC {
 
 	handleServerData(data){
 		const jsonData = JSON.parse(data.data)
-		console.log(jsonData)
+		
 		if (jsonData.type == "initial") {
 			this.id = jsonData.id
 			this.connectionCreationTime = jsonData.connectionCreationTime
@@ -64,6 +73,11 @@ class PeerRTC {
 		 else if(jsonData.type == "answerpeer"){
 			console.log(jsonData.fromId)
 			console.log("answering")
+		} else if (jsonData.type == "peerids") {
+			const peerIdsCallback = this.onPeerIds
+			if (peerIdsCallback != null) {
+				peerIdsCallback(jsonData.ids)
+			}
 		}
 	}
 
