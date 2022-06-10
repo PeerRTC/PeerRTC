@@ -3,6 +3,10 @@ const resBuilder = require("./response-builder")
 
 const clients = new Map()
 
+var isClientIdPublic = false
+
+
+
 function addNewClient(client){
 	var id = null
 
@@ -32,6 +36,7 @@ function addNewClient(client){
 	res.buildTypeInitial(id, metadata.lastUpdateTime)
 	client.send(res.getResponse())
 }
+
 
 
 function handleMessage(requesterId, data){
@@ -65,7 +70,20 @@ function handleMessage(requesterId, data){
 	
 }
 
+
+function getAllClientIds(){
+	const ids = []
+	if (isClientIdPublic) {
+		for (id of clients.keys()){
+			ids.push(id)
+		}
+	} 
+
+	return ids
+}
+
 module.exports = {
-	addNewClient:addNewClient
+	addNewClient:addNewClient,
+	setIsClientIdPublic:setIsClientIdPublic
 }
 
