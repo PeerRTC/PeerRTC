@@ -4,12 +4,12 @@ class PeerRTC {
 		this.serverURL = serverURL
 		this.isConnectedToServer = false
 		this.socket = this.initWebSocket()
+		this.id = null
 	}
 
 
 	initWebSocket(){
 		// Convert the provided server url to web socket url
-
 		const webSocketURL = "ws://" + this.serverURL.replaceAll(/((http(s{0,1}))|(ws(s{0,1}))):\/\//g, "")
 		
 		const socket = new WebSocket(webSocketURL)
@@ -20,10 +20,17 @@ class PeerRTC {
 		}
 
 		socket.onmessage = data=>{
-			console.log(data)
+			this.handleServerData(data)
 		}
 
 		return socket
+	}
+
+	handleServerData(data){
+		const jsonData = JSON.parse(data.data)
+		if (jsonData.type == "inital") {
+			this.id = jsonData.id
+		}
 	}
 
 	
