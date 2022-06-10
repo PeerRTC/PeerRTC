@@ -72,7 +72,7 @@ function handleMessage(requesterId, data){
 				}
 			}
 			
-			res.buildTypeClientIds(ids)
+			res.buildTypePeerIds(ids)
 		}
 
 		if (toId!= null) {
