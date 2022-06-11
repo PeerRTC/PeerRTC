@@ -121,7 +121,7 @@ function handleMessage(requesterId, data){
 			var peerId = jsonData.peerId
 			const peer = clients.get(peerId)
 			var payload = undefined
-			if (peer != undefined) {
+			if (peer ) {
 				payload = peer.payload
 			} else{
 				peerId = undefined
@@ -134,7 +134,7 @@ function handleMessage(requesterId, data){
 		}
 
 
-		if (toId!= null) {
+		if (toId) {
 			clients.get(toId).client.send(res.getResponse())
 		}
 
