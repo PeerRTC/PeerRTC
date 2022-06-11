@@ -101,6 +101,21 @@ function handleMessage(requesterId, data){
 			const payload = JSON.parse(jsonData.payload)
 			clients.get(requesterId).payload = payload
 			res.buildTypeNewPayload(jsonData.payload)
+		} else if (jsonData.type == "getallpeerpayloads") {
+			toId = requesterId
+			const payloads = []
+			if (config.isClientIdsPublic) {
+				for(id of  clients.keys()){
+					payloads.push(JSON.stringify({
+						"id": id,
+						"payload": clients.get(id).payload
+					}))
+				}
+
+			}
+
+			res.buildTypeAllPeerPayloads(payloads)
+
 		}
 
 		if (toId!= null) {
