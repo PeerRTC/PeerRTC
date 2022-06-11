@@ -9,7 +9,9 @@ class PeerRTC {
 
 	constructor(serverURL, onConnectToServer) {	
 		this.serverURL = serverURL
+		this.blobs = new BlobsStorage()
 		this.isConnectedToServer = false
+
 		this.id = null
 		this.socket = null
 		this.browserRTC = null
@@ -155,10 +157,10 @@ class PeerRTC {
 			
 		}
 
-		const onfilemessage = (fileName, file, finishDownloading) =>{
+		const onfilemessage = (fileName, fileBytesArray, finishDownloading) =>{
 			const onfilemessage = this.onfilemessage
 			if (onfilemessage != null) {
-				onfilemessage(fileName, file, finishDownloading)
+				onfilemessage(fileName, fileBytesArray, finishDownloading)
 			} 
 		}
 
@@ -453,4 +455,30 @@ class FileArrayBuffer{
 			"finishDownloading":  finishDownloading
 		}
 	}
+}
+
+
+class BlobsStorage{
+	constructor(){
+		this.blobs = new Map()
+	}
+
+
+	updateBlob(fname, arrayBuffer){
+		const blobs = this.blobs
+		if (!blobs.has(fname)) {
+			blobs.set(fname, new Blob([]))
+		}
+		blobs.set(fname, new Blob([blobs.get(fname), arrayBuffer]))		
+	
+	}
+
+	getBlob(fname){
+		return this.blobs.get(fname)
+	}
+
+	deleteBlob(fname){
+		this.blobs.delete(fname)
+	}	
+
 }
