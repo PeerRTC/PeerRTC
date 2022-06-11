@@ -19,6 +19,7 @@ class PeerRTC {
 		this.browserRTC = null
 		this.currentPeerId = null
 
+		this.onpeerconnectsuccess = null
 		this.onpeerids = null
 		this.ontextmessage = null
 		this.onfilemessage
@@ -159,7 +160,7 @@ class PeerRTC {
 	initBrowerRTC(targetPeerId, isOffer, answerSdp, sdpCallBack){
 		var browserRTC  = this.browserRTC
 
-		if (browserRTC == null) {
+		if (!browserRTC) {
 			browserRTC = new BrowserRTC()
 		} else if (targetPeerId != this.currentPeerId) {
 			// ensures that only the current peer id is able to update the current connection
@@ -169,7 +170,10 @@ class PeerRTC {
 		this.browserRTC = browserRTC
 
 		const onConnectionEstablished = ()=>{
-			console.log("Connection established")
+			const onpeerconnectsuccess = this.onpeerconnectsuccess
+			if (onpeerconnectsuccess) {
+				onpeerconnectsuccess(this.currentPeerId)
+			}
 		}
 
 		const ontextmessage = text => {
@@ -196,7 +200,7 @@ class PeerRTC {
 			const oncloseP2P = this.oncloseP2P
 			if (oncloseP2P ) {
 				var currentPeerId = this.currentPeerId
-				if (currentPeerId == null) {
+				if (!currentPeerId) {
 					currentPeerId = ""
 				}
 				oncloseP2P(currentPeerId)
@@ -327,7 +331,7 @@ class BrowserRTC{
 		const iceCandidates = []
 		conn.onicecandidate  = event =>{
 			const iceCandidate = event.candidate
-			if (iceCandidate == null) {
+			if (!iceCandidate) {
 				onicecandidate (iceCandidates, conn.localDescription)
 			} else{
 				iceCandidates.push(iceCandidate)
