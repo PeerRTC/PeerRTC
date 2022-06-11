@@ -14,7 +14,7 @@ class PeerRTC {
 		this.browserRTC = null
 		this.currentPeerId = null
 
-		this.onPeerIds = null
+		this.onpeerids = null
 		this.onmessage = null
 		this.oncloseP2P = null
 		this.onclose = null
@@ -201,9 +201,9 @@ class PeerRTC {
 		 	}).catch(e=>{})
 
 		} else if (jsonData.type == "peerids") {
-			const peerIdsCallback = this.onPeerIds
-			if (peerIdsCallback != null) {
-				peerIdsCallback(jsonData.ids)
+			const onpeerids = this.onpeerids
+			if (onpeerids != null) {
+				onpeerids(jsonData.ids)
 			}
 		} else if (jsonData.type == "newpayload") {
 			const onnewpayload = this.onnewpayload
