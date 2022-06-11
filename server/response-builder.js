@@ -7,6 +7,7 @@ class ResponseBuilder{
 	static RES_TYPE_PEER_IDS = "peerids"
 	static RES_TYPE_NEW_PAYLOAD = "newpayload"
 	static RES_ALL_PEER_PAYLOADS = "allpeerpayloads"
+	static RES_PEER_PAYLOAD = "peerpayload"
 
 	constructor(){
 		this.response = {}
@@ -66,6 +67,14 @@ class ResponseBuilder{
 		const response = this.response
 		response.type = ResponseBuilder.RES_ALL_PEER_PAYLOADS
 		response.payloads = payloads
+	}
+
+	buildTypePeerPayload(peerId, payload){
+		const response = this.response
+		response.type = ResponseBuilder.RES_PEER_PAYLOAD
+		response.peerId = peerId
+		response.payload = payload
+
 	}
 }
 

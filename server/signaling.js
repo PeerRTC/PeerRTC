@@ -116,6 +116,18 @@ function handleMessage(requesterId, data){
 
 			res.buildTypeAllPeerPayloads(payloads)
 
+		} else if(jsonData.type == "getpeerpayload"){
+			toId = requesterId
+			var peerId = jsonData.peerId
+			const peer = clients.get(peerId)
+			var payload = undefined
+			if (peer != undefined) {
+				payload = peer.payload
+			} else{
+				peerId = undefined
+			}
+
+			res.buildTypePeerPayload(peerId, payload)
 		}
 
 		if (toId!= null) {
