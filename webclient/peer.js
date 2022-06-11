@@ -3,6 +3,7 @@ class PeerRTC {
 	static REQ_TYPE_ANSWER_PEER = "answerpeer"
 	static REQ_TYPE_PEER_IDS = "peerids"
 	static REQ_TYPE_ADD_PAYLOAD = "addPayload"
+	static REQ_TYPE_GET_ALL_PEER_PAYLOADS = "getallpeerpayloads"
 
 	constructor(serverURL, onConnectToServer) {	
 		this.serverURL = serverURL
@@ -17,6 +18,7 @@ class PeerRTC {
 		this.oncloseP2P = null
 		this.onclose = null
 		this.onnewpayload = null
+		this.onpeerpayloads = null
 	}
 
 	sendData(data){
@@ -31,6 +33,15 @@ class PeerRTC {
 			"payload": JSON.stringify(jsonData)
 		}))
 	}
+
+
+	getAllPeerPayloads(){
+		this.socket.send(JSON.stringify({
+			"type": PeerRTC.REQ_TYPE_GET_ALL_PEER_PAYLOADS
+		}))
+	}
+
+
 
 
 	closeP2P(){
@@ -191,6 +202,11 @@ class PeerRTC {
 			const onnewpayload = this.onnewpayload
 			if (onnewpayload != null) {
 				onnewpayload(jsonData.payload)
+			}
+		} else if (jsonData.type == "allpeerpayloads") {
+			const onpeerpayloads = this.onpeerpayloads
+			if (onpeerpayloads != null) {
+				onpeerpayloads(jsonData.payloads)
 			}
 		}
 	}
