@@ -169,10 +169,12 @@ class PeerRTC {
 
 		this.browserRTC = browserRTC
 
-		const onConnectionEstablished = ()=>{
+		const onConnectionEstablished = peerId=>{
+			this.currentPeerId = peerId
+
 			const onpeerconnectsuccess = this.onpeerconnectsuccess
 			if (onpeerconnectsuccess) {
-				onpeerconnectsuccess(this.currentPeerId)
+				onpeerconnectsuccess(peerId)
 			}
 		}
 
@@ -198,12 +200,8 @@ class PeerRTC {
 		const oncloseP2P = ()=>{
 			this.closeP2P()
 			const oncloseP2P = this.oncloseP2P
-			if (oncloseP2P ) {
-				var currentPeerId = this.currentPeerId
-				if (!currentPeerId) {
-					currentPeerId = ""
-				}
-				oncloseP2P(currentPeerId)
+			if (oncloseP2P) {
+				oncloseP2P()
 			}
 		}
 
@@ -223,7 +221,7 @@ class PeerRTC {
 		if(isOffer){
 			browserRTC.createOffer()
 		} else{
-			browserRTC.createAnswer(answerSdp)
+			browserRTC.createAnswer(targetPeerId, answerSdp)
 		}
 
 	}
@@ -267,7 +265,7 @@ class PeerRTC {
 
 		 else if(jsonData.type == "answerpeer"){
 		 	const browserRTC = this.browserRTC
-		 	browserRTC.setRemoteDescription(jsonData.sdp).then(o=>{
+		 	browserRTC.setRemoteDescription(jsonData.fromId, jsonData.sdp).then(o=>{
 		 		browserRTC.addIceCandidates(jsonData.iceCandidates)
 		 	}).catch(e=>{})
 
@@ -318,6 +316,8 @@ class BrowserRTC{
 
 	constructor(){
 		const conn = new RTCPeerConnection()
+		conn.peerId = null
+
 		this.conn = conn
 
 		this.onmessage =  null
@@ -343,7 +343,10 @@ class BrowserRTC{
 			onnewtrack(event.track, event.streams)
 		}
 
-		this.onclose = onclose
+		this.onclose = ()=>{
+			this.conn.peerId
+			onclose(conn.pee)
+		}
 
 		this.onmessage = message => {
 			const data = message.data
@@ -355,7 +358,9 @@ class BrowserRTC{
 			}
 			
 		}
-		this.onConnectionEstablished = onConnectionEstablished
+		this.onConnectionEstablished = ()=>{
+			onConnectionEstablished(this.conn.peerId)
+		}
 	}
 
 
@@ -364,24 +369,28 @@ class BrowserRTC{
 	createOffer(){
 		const conn = this.conn
 		const datachannel = conn.createDataChannel("Data Channel")
+
+		this.conn.peerId = null
 		this.initDataChannel(datachannel)
 		conn.createOffer().then(o => conn.setLocalDescription(o)).catch(e=>{})
 
 	}
 
 
-	createAnswer(sdp){
+	createAnswer(peerId, sdp){
 		const conn = this.conn
 		conn.ondatachannel = event=> {
 			this.initDataChannel(event.channel)
 		}
-		conn.setRemoteDescription(sdp)
+		this.setRemoteDescription(peerId, sdp)
 		conn.createAnswer().then(o => conn.setLocalDescription(o)).catch(e=>{})
 	}
 
 
-	setRemoteDescription(sdp){
-		return this.conn.setRemoteDescription(sdp)
+	setRemoteDescription(peerId, sdp){
+		const conn = this.conn
+		conn.peerId = peerId
+		return conn.setRemoteDescription(sdp)
 	}
 
 	sendText(text){
