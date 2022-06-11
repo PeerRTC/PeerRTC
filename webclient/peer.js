@@ -27,11 +27,11 @@ class PeerRTC {
 	}
 
 	sendText(text){
-		this.browserRTC.send(BrowserRTC.TYPE_TEXT ,text)
+		this.browserRTC.sendText(text)
 	}
 
-	sendFile(file){
-		this.browserRTC.send(BrowserRTC.TYPE_FILE, file)
+	sendFile(file, chunkSize=1024){
+		this.browserRTC.sendFile(file, chunkSize)
 	}
 
 
@@ -150,7 +150,7 @@ class PeerRTC {
 		const onmessage = message => {
 			const ontextmessage = this.ontextmessage
 			const onfilemessage = this.onfilemessage
-			
+
 			if (message instanceof ArrayBuffer && onfilemessage != null) {
 				onfilemessage(message)
 			} else {
@@ -324,33 +324,31 @@ class BrowserRTC{
 		return this.conn.setRemoteDescription(sdp)
 	}
 
-	send(type, data){
-		if (type == BrowserRTC.TYPE_TEXT) {
-			this.datachannel.send(data)
-		} else if (type == BrowserRTC.TYPE_FILE) {
+	sendText(text){
+		this.datachannel.send(text)
+	}
 
-			const fileReader = new FileReader()
-			const chunkSize = 1024;
-			var offset = 0;
 
-			const readChunk = ()=>{
-				const chunked = data.slice(offset, offset + chunkSize)
-				fileReader.readAsArrayBuffer(chunked)
-			}
+	sendFile(file, chunkSize){
+		const fileReader = new FileReader()
+		var offset = 0;
 
-			fileReader.onload = event=>{
-				const chunked = event.target.result
-				offset += chunked.byteLength
-				this.datachannel.send(chunked)
-				if (offset < data.size) {
-					readChunk()
-				}
-			}
-
-			readChunk()
-			
+		const readChunk = ()=>{
+			const chunked = file.slice(offset, offset + chunkSize)
+			fileReader.readAsArrayBuffer(chunked)
 		}
-		
+
+		fileReader.onload = event=>{
+			const chunked = event.target.result
+			offset += chunked.byteLength
+			this.datachannel.send(chunked)
+			if (offset < file.size) {
+				readChunk()
+			}
+		}
+
+		readChunk()
+
 	}
 	
 
