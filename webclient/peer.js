@@ -464,6 +464,7 @@ class BlobsStorage{
 	}
 
 
+	// Be sure to handle memory errors as blobs can grow bigger
 	updateBlob(fname, arrayBuffer){
 		const blobs = this.blobs
 		if (!blobs.has(fname)) {
