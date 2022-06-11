@@ -14,7 +14,7 @@ function addNewClient(client){
 	var id = null
 
 	// prevent id duplicates
-	while(id == null || clients.has(id)){
+	while(!id || clients.has(id)){
 		id = utils.uuidv4()
 	}
 
