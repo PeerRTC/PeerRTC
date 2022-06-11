@@ -95,6 +95,11 @@ function handleMessage(requesterId, data){
 			}
 			
 			res.buildTypePeerIds(ids)
+
+		} else if (jsonData.type == "addPayload") {
+			const payload = JSON.parse(jsonData.payload)
+			clients.get(requesterId).payload = payload
+			console.log(payload)
 		}
 
 		if (toId!= null) {
