@@ -12,6 +12,8 @@ class PeerRTC {
 		this.blobs = new BlobsStorage()
 		this.isConnectedToServer = false
 
+		// declaring all global variables to null for easy visualization purposes only
+
 		this.id = null
 		this.socket = null
 		this.browserRTC = null
@@ -26,6 +28,7 @@ class PeerRTC {
 		this.onpeerpayloads = null
 		this.onpeerconnectrequest= null
 		this.onpeerconnectdecline = null
+		this.onnewtrack = null
 	}
 
 	sendText(text){
@@ -64,7 +67,7 @@ class PeerRTC {
 
 	closeP2P(){
 		const browserRTC  = this.browserRTC
-		if (browserRTC != null) {
+		if (browserRTC ) {
 			browserRTC.close()
 		}
 		
@@ -76,7 +79,7 @@ class PeerRTC {
 		this.closeP2P()
 		const socket = this.socket
 		const onclose = this.onclose
-		if (socket != null && onclose) {
+		if (socket  && onclose) {
 			this.socket = null
 			this.id = null
 
@@ -151,7 +154,7 @@ class PeerRTC {
 
 		const ontextmessage = text => {
 			const ontextmessage = this.ontextmessage
-			if (ontextmessage != null) {} {
+			if (ontextmessage ) {} {
 				ontextmessage(text)
 			}
 			
@@ -159,7 +162,7 @@ class PeerRTC {
 
 		const onfilemessage = (fileName, fileBytesArray, finishDownloading) =>{
 			const onfilemessage = this.onfilemessage
-			if (onfilemessage != null) {
+			if (onfilemessage ) {
 				onfilemessage(fileName, fileBytesArray, finishDownloading)
 			} 
 		}
@@ -171,7 +174,7 @@ class PeerRTC {
 		const oncloseP2P = ()=>{
 			this.closeP2P()
 			const oncloseP2P = this.oncloseP2P
-			if (oncloseP2P != null) {
+			if (oncloseP2P ) {
 				var currentPeerId = this.currentPeerId
 				if (currentPeerId == null) {
 					currentPeerId = ""
@@ -180,9 +183,18 @@ class PeerRTC {
 			}
 		}
 
+
+		const onnewtrack = (newTrack, trackStreams) => {
+			const onnewtrack = this.onnewtrack
+			if (onnewtrack ) {
+				onnewtrack(newTrack, trackStreams)
+			}
+
+		}
+
 		
 
-		browserRTC.setCallbacks(onConnectionEstablished, oncloseP2P, onicecandididate, ontextmessage, onfilemessage)
+		browserRTC.setCallbacks(onConnectionEstablished, oncloseP2P, onicecandididate, ontextmessage, onfilemessage, onnewtrack)
 		
 		if(isOffer){
 			browserRTC.createOffer()
@@ -223,7 +235,7 @@ class PeerRTC {
 			
 
 			const onpeerconnectrequest = this.onpeerconnectrequest
-			if (onpeerconnectrequest != null) {
+			if (onpeerconnectrequest ) {
 				onpeerconnectrequest(peerId, accept, decline)
 			}
 			
@@ -237,22 +249,22 @@ class PeerRTC {
 
 		} else if (jsonData.type == "peerids") {
 			const onpeerids = this.onpeerids
-			if (onpeerids != null) {
+			if (onpeerids ) {
 				onpeerids(jsonData.ids)
 			}
 		} else if (jsonData.type == "newpayload") {
 			const onnewpayload = this.onnewpayload
-			if (onnewpayload != null) {
+			if (onnewpayload ) {
 				onnewpayload(jsonData.payload)
 			}
 		} else if (jsonData.type == "allpeerpayloads") {
 			const onpeerpayloads = this.onpeerpayloads
-			if (onpeerpayloads != null) {
+			if (onpeerpayloads ) {
 				onpeerpayloads(jsonData.payloads)
 			}
 		} else if (jsonData.type == "peerpayload") {
 			const onpeerpayloads = this.onpeerpayloads
-			if (onpeerpayloads != null) {
+			if (onpeerpayloads ) {
 				onpeerpayloads(JSON.stringify({
 					"id":jsonData.peerId,
 					"payload":jsonData.payload
@@ -260,7 +272,7 @@ class PeerRTC {
 			}
 		} else if (jsonData.type == "peerconnectdecline") {
 			const onpeerconnectdecline = this.onpeerconnectdecline
-			if (onpeerconnectdecline != null) {
+			if (onpeerconnectdecline ) {
 				onpeerconnectdecline(jsonData.peerId)
 			}
 		}
@@ -286,7 +298,7 @@ class BrowserRTC{
 		this.closed = false
 	}
 
-	setCallbacks(onConnectionEstablished, onclose, onicecandidate , ontextmessage, onfilemessage){
+	setCallbacks(onConnectionEstablished, onclose, onicecandidate , ontextmessage, onfilemessage, onnewtrack){
 		const conn = this.conn
 		const iceCandidates = []
 		conn.onicecandidate  = event =>{
@@ -298,6 +310,11 @@ class BrowserRTC{
 			}
 			
 		}
+
+		conn.ontrack = event => {
+			onnewtrack(event.track, event.streams)
+		}
+
 		this.onclose = onclose
 
 		this.onmessage = message => {
@@ -396,7 +413,7 @@ class BrowserRTC{
 			this.closed  = true
 			this.conn.close()
 			const datachannel = this.datachannel
-			if (datachannel!= null) {
+			if (datachannel) {
 				datachannel.close()
 			}
 		}
