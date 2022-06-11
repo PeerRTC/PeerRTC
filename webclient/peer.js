@@ -136,6 +136,26 @@ class PeerRTC {
 	}
 
 
+
+	updateBlob(fname, arrayBuffer){
+		this.blobs.updateBlob(fname, arrayBuffer)
+	}
+
+
+	getBlob(fname){
+		return this.blobs.getBlob(fname)
+	}
+
+	deleteBlob(fname){
+		this.blobs.deleteBlob(fname)
+	}
+
+
+	getAllFiles(){
+		return this.blobs.getAllFiles()
+	}
+
+
 	initBrowerRTC(targetPeerId, isOffer, answerSdp, sdpCallBack){
 		var browserRTC  = this.browserRTC
 
@@ -278,6 +298,10 @@ class PeerRTC {
 		}
 	}
 
+
+
+
+
 }
 
 
@@ -419,6 +443,7 @@ class BrowserRTC{
 		}
 		
 	}
+
 }
 
 class FileArrayBuffer{
@@ -497,6 +522,16 @@ class BlobsStorage{
 
 	deleteBlob(fname){
 		this.blobs.delete(fname)
+	}
+
+
+	getAllFiles(){
+		const files = []
+		for(file in this.blobs.keys()){
+			files.push(file)
+		}
+
+		return files
 	}	
 
 }
