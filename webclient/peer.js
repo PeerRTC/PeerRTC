@@ -16,6 +16,7 @@ class PeerRTC {
 		this.onmessage = null
 		this.oncloseP2P = null
 		this.onclose = null
+		this.onnewpayload = null
 	}
 
 	sendData(data){
@@ -185,6 +186,11 @@ class PeerRTC {
 			const peerIdsCallback = this.onPeerIds
 			if (peerIdsCallback != null) {
 				peerIdsCallback(jsonData.ids)
+			}
+		} else if (jsonData.type == "newpayload") {
+			const onnewpayload = this.onnewpayload
+			if (onnewpayload != null) {
+				onnewpayload(jsonData.payload)
 			}
 		}
 	}
