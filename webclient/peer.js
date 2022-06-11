@@ -30,8 +30,8 @@ class PeerRTC {
 		this.browserRTC.sendText(text)
 	}
 
-	sendFile(file, chunkSize=1024){
-		this.browserRTC.sendFile(file, chunkSize)
+	sendFile(fname, file, chunkSize=1024){
+		this.browserRTC.sendFile(fname, file, chunkSize)
 	}
 
 
@@ -147,16 +147,19 @@ class PeerRTC {
 			console.log("Connection established")
 		}
 
-		const onmessage = message => {
+		const ontextmessage = text => {
 			const ontextmessage = this.ontextmessage
-			const onfilemessage = this.onfilemessage
-
-			if (message instanceof ArrayBuffer && onfilemessage != null) {
-				onfilemessage(message)
-			} else {
-				ontextmessage(message.toString())
+			if (ontextmessage != null) {} {
+				ontextmessage(text)
 			}
 			
+		}
+
+		const onfilemessage = (fileName, file) =>{
+			const onfilemessage = this.onfilemessage
+			if (onfilemessage != null) {
+				onfilemessage(fileName, file)
+			} 
 		}
 
 		const onicecandididate = (iceCandidates, sdp) => {
@@ -177,7 +180,7 @@ class PeerRTC {
 
 		
 
-		browserRTC.setCallbacks(onConnectionEstablished, oncloseP2P, onicecandididate, onmessage)
+		browserRTC.setCallbacks(onConnectionEstablished, oncloseP2P, onicecandididate, ontextmessage, onfilemessage)
 		
 		if(isOffer){
 			browserRTC.createOffer()
@@ -272,13 +275,16 @@ class BrowserRTC{
 	constructor(){
 		const conn = new RTCPeerConnection()
 		this.conn = conn
+		this.asciiEncoder = new TextEncoder()
+		this.asciiDecoder = new TextDecoder()
+
 		this.onmessage =  null
 		this.datachannel = null
 		this.onclose = null
 		this.closed = false
 	}
 
-	setCallbacks(onConnectionEstablished, onclose, onicecandidate , onmessage){
+	setCallbacks(onConnectionEstablished, onclose, onicecandidate , ontextmessage, onfilemessage){
 		const conn = this.conn
 		const iceCandidates = []
 		conn.onicecandidate  = event =>{
@@ -293,7 +299,17 @@ class BrowserRTC{
 		this.onclose = onclose
 
 		this.onmessage = message => {
-			onmessage(message.data)
+			const data = message.data
+			if (data instanceof ArrayBuffer) {
+				const buffer = new Uint8Array(data)
+				const fileNameAscii = buffer.slice(1, buffer[0] + 1)
+				const fileArrayBuffer = buffer.slice(buffer[0] + 1, buffer.length)
+				const fileName = this.asciiDecoder.decode(fileNameAscii)
+				onfilemessage(fileName, fileArrayBuffer)
+			} else{
+				ontextmessage(data.toString())
+			}
+			
 		}
 		this.onConnectionEstablished = onConnectionEstablished
 	}
@@ -329,7 +345,15 @@ class BrowserRTC{
 	}
 
 
-	sendFile(file, chunkSize){
+	sendFile(fname, file, chunkSize){
+		// convert file name to ascii array
+		const fnameLength = fname.length
+
+		//this will contain the value for fnameLength in the ArrayBuffer
+		const firstDataLength = 1 
+
+		const fnameArray = this.asciiEncoder.encode(fname)
+
 		const fileReader = new FileReader()
 		var offset = 0;
 
@@ -339,9 +363,16 @@ class BrowserRTC{
 		}
 
 		fileReader.onload = event=>{
-			const chunked = event.target.result
+			const chunked = new Uint8Array (event.target.result)
+			const finalArrayBuffer = new Uint8Array(fnameLength + chunked.length + firstDataLength)
+
+			finalArrayBuffer[0] = fnameLength
+			finalArrayBuffer.set(fnameArray, firstDataLength)
+			finalArrayBuffer.set(chunked, fnameLength + firstDataLength)
+
 			offset += chunked.byteLength
-			this.datachannel.send(chunked)
+
+			this.datachannel.send(finalArrayBuffer)
 			if (offset < file.size) {
 				readChunk()
 			}
