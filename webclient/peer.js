@@ -16,7 +16,8 @@ class PeerRTC {
 		this.currentPeerId = null
 
 		this.onpeerids = null
-		this.onmessage = null
+		this.ontextmessage = null
+		this.onfilemessage
 		this.oncloseP2P = null
 		this.onclose = null
 		this.onnewpayload = null
@@ -25,8 +26,12 @@ class PeerRTC {
 		this.onpeerconnectdecline = null
 	}
 
-	sendData(data){
-		this.browserRTC.send(data)
+	sendText(text){
+		this.browserRTC.send(BrowserRTC.TYPE_TEXT ,text)
+	}
+
+	sendFile(file){
+		this.browserRTC.send(BrowserRTC.TYPE_FILE, file)
 	}
 
 
@@ -143,10 +148,15 @@ class PeerRTC {
 		}
 
 		const onmessage = message => {
-			const onmessage = this.onmessage
-			if (onmessage != null) {
-				onmessage(message)
+			const ontextmessage = this.ontextmessage
+			const onfilemessage = this.onfilemessage
+			
+			if (message instanceof ArrayBuffer && onfilemessage != null) {
+				onfilemessage(message)
+			} else {
+				ontextmessage(message.toString())
 			}
+			
 		}
 
 		const onicecandididate = (iceCandidates, sdp) => {
@@ -256,6 +266,9 @@ class PeerRTC {
 
 // Wrapper class on top of the built in WebRTC api in modern browsers
 class BrowserRTC{
+	static TYPE_TEXT = "text"
+	static TYPE_FILE = "file"
+
 	constructor(){
 		const conn = new RTCPeerConnection()
 		this.conn = conn
@@ -311,8 +324,33 @@ class BrowserRTC{
 		return this.conn.setRemoteDescription(sdp)
 	}
 
-	send(data){
-		this.datachannel.send(data)
+	send(type, data){
+		if (type == BrowserRTC.TYPE_TEXT) {
+			this.datachannel.send(data)
+		} else if (type == BrowserRTC.TYPE_FILE) {
+
+			const fileReader = new FileReader()
+			const chunkSize = 1024;
+			var offset = 0;
+
+			const readChunk = ()=>{
+				const chunked = data.slice(offset, offset + chunkSize)
+				fileReader.readAsArrayBuffer(chunked)
+			}
+
+			fileReader.onload = event=>{
+				const chunked = event.target.result
+				offset += chunked.byteLength
+				this.datachannel.send(chunked)
+				if (offset < data.size) {
+					readChunk()
+				}
+			}
+
+			readChunk()
+			
+		}
+		
 	}
 	
 
@@ -324,6 +362,7 @@ class BrowserRTC{
 
 
 	initDataChannel(channel){
+		
 		channel.onmessage = this.onmessage
 		channel.onopen = this.onConnectionEstablished
 		channel.onclose= this.onclose
