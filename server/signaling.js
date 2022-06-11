@@ -128,7 +128,11 @@ function handleMessage(requesterId, data){
 			}
 
 			res.buildTypePeerPayload(peerId, payload)
+		} else if(jsonData.type == "declinepeerconnect"){
+			toId = jsonData.peerId
+			res.buildTypePeerConnectDecline(requesterId)
 		}
+
 
 		if (toId!= null) {
 			clients.get(toId).client.send(res.getResponse())

@@ -5,6 +5,7 @@ class PeerRTC {
 	static REQ_TYPE_ADD_PAYLOAD = "addPayload"
 	static REQ_TYPE_GET_ALL_PEER_PAYLOADS = "getallpeerpayloads"
 	static REQ_TYPE_GET_PEER_PAYLOAD = "getpeerpayload"
+	static REQ_TYPE_DECLINE_PEER_CONNECT = "declinepeerconnect"
 
 	constructor(serverURL, onConnectToServer) {	
 		this.serverURL = serverURL
@@ -20,6 +21,8 @@ class PeerRTC {
 		this.onclose = null
 		this.onnewpayload = null
 		this.onpeerpayloads = null
+		this.onpeerconnectrequest= null
+		this.onpeerconnectdecline = null
 	}
 
 	sendData(data){
@@ -181,16 +184,33 @@ class PeerRTC {
 			this.id = jsonData.id
 			this.connectionCreationTime = jsonData.connectionCreationTime
 		} else if(jsonData.type == "incomingpeer"){
-			this.initBrowerRTC(jsonData.fromId, false, jsonData.sdp, (iceCandidates, sdp)=>{
-				this.browserRTC.addIceCandidates(jsonData.iceCandidates)
+			const peerId = jsonData.fromId
+			const accept = ()=>{
+				this.initBrowerRTC(jsonData.fromId, false, jsonData.sdp, (iceCandidates, sdp)=>{
+					this.browserRTC.addIceCandidates(jsonData.iceCandidates)
+					this.socket.send(JSON.stringify({
+						"type": PeerRTC.REQ_TYPE_ANSWER_PEER,
+						"peerId": peerId,
+						"iceCandidates": iceCandidates,
+						"sdp": sdp
+					}))
+				})
+			}
+
+
+			const decline = ()=>{
 				this.socket.send(JSON.stringify({
-					"type": PeerRTC.REQ_TYPE_ANSWER_PEER,
-					"peerId": jsonData.fromId,
-					"iceCandidates": iceCandidates,
-					"sdp": sdp
+					"type":PeerRTC.REQ_TYPE_DECLINE_PEER_CONNECT,
+					"peerId":peerId
 				}))
-			})
 			
+			}
+			
+
+			const onpeerconnectrequest = this.onpeerconnectrequest
+			if (onpeerconnectrequest != null) {
+				onpeerconnectrequest(peerId, accept, decline)
+			}
 			
 		}
 
@@ -222,6 +242,11 @@ class PeerRTC {
 					"id":jsonData.peerId,
 					"payload":jsonData.payload
 				}))
+			}
+		} else if (jsonData.type == "peerconnectdecline") {
+			const onpeerconnectdecline = this.onpeerconnectdecline
+			if (onpeerconnectdecline != null) {
+				onpeerconnectdecline(jsonData.peerId)
 			}
 		}
 	}
