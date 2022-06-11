@@ -157,6 +157,11 @@ class PeerRTC {
 	}
 
 
+	deleteAllBlobFiles(){
+		this.blobs.deleteAllFiles()
+	}
+
+
 	initBrowerRTC(targetPeerId, isOffer, answerSdp, sdpCallBack){
 		var browserRTC  = this.browserRTC
 
@@ -546,5 +551,10 @@ class BlobsStorage{
 
 		return files
 	}	
+
+
+	deleteAllFiles(){
+		this.blobs.clear()
+	}
 
 }
