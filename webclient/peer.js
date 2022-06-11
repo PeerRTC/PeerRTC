@@ -448,7 +448,7 @@ class FileArrayBuffer{
 		}
 
 		return {
-			"filename": fileName,
+			"fileName": fileName,
 			"fileArrayBuffer": fileArrayBuffer,
 			"finishDownloading":  finishDownloading
 		}
