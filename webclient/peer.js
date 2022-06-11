@@ -2,6 +2,7 @@ class PeerRTC {
 	static REQ_TYPE_CONNECT_PEER = "connectpeer"
 	static REQ_TYPE_ANSWER_PEER = "answerpeer"
 	static REQ_TYPE_PEER_IDS = "peerids"
+	static REQ_TYPE_ADD_PAYLOAD = "addPayload"
 
 	constructor(serverURL, onConnectToServer) {	
 		this.serverURL = serverURL
@@ -19,6 +20,15 @@ class PeerRTC {
 
 	sendData(data){
 		this.browserRTC.send(data)
+	}
+
+
+	// For creating data payload associated to the websocket of this client
+	addPayload(jsonData){
+		this.socket.send(JSON.stringify({
+			"type":PeerRTC.REQ_TYPE_ADD_PAYLOAD,
+			"payload": JSON.stringify(jsonData)
+		}))
 	}
 
 
