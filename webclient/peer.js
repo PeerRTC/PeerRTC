@@ -155,10 +155,10 @@ class PeerRTC {
 			
 		}
 
-		const onfilemessage = (fileName, file) =>{
+		const onfilemessage = (fileName, file, finishDownloading) =>{
 			const onfilemessage = this.onfilemessage
 			if (onfilemessage != null) {
-				onfilemessage(fileName, file)
+				onfilemessage(fileName, file, finishDownloading)
 			} 
 		}
 
@@ -272,11 +272,11 @@ class BrowserRTC{
 	static TYPE_TEXT = "text"
 	static TYPE_FILE = "file"
 
+	
+
 	constructor(){
 		const conn = new RTCPeerConnection()
 		this.conn = conn
-		this.asciiEncoder = new TextEncoder()
-		this.asciiDecoder = new TextDecoder()
 
 		this.onmessage =  null
 		this.datachannel = null
@@ -301,11 +301,8 @@ class BrowserRTC{
 		this.onmessage = message => {
 			const data = message.data
 			if (data instanceof ArrayBuffer) {
-				const buffer = new Uint8Array(data)
-				const fileNameAscii = buffer.slice(1, buffer[0] + 1)
-				const fileArrayBuffer = buffer.slice(buffer[0] + 1, buffer.length)
-				const fileName = this.asciiDecoder.decode(fileNameAscii)
-				onfilemessage(fileName, fileArrayBuffer)
+				const extracted = FileArrayBuffer.extractDataFromArrayBuffer(data)
+				onfilemessage(extracted.fileName, extracted.fileArrayBuffer, extracted.finishDownloading)
 			} else{
 				ontextmessage(data.toString())
 			}
@@ -346,13 +343,6 @@ class BrowserRTC{
 
 
 	sendFile(fname, file, chunkSize){
-		// convert file name to ascii array
-		const fnameLength = fname.length
-
-		//this will contain the value for fnameLength in the ArrayBuffer
-		const firstDataLength = 1 
-
-		const fnameArray = this.asciiEncoder.encode(fname)
 
 		const fileReader = new FileReader()
 		var offset = 0;
@@ -364,16 +354,15 @@ class BrowserRTC{
 
 		fileReader.onload = event=>{
 			const chunked = new Uint8Array (event.target.result)
-			const finalArrayBuffer = new Uint8Array(fnameLength + chunked.length + firstDataLength)
+			const finishDownloading = offset + chunked.byteLength >= file.size
 
-			finalArrayBuffer[0] = fnameLength
-			finalArrayBuffer.set(fnameArray, firstDataLength)
-			finalArrayBuffer.set(chunked, fnameLength + firstDataLength)
+			const finalArrayBuffer = FileArrayBuffer.buildByteArrayForSending(fname, chunked, finishDownloading)
 
 			offset += chunked.byteLength
 
 			this.datachannel.send(finalArrayBuffer)
-			if (offset < file.size) {
+
+			if (!finishDownloading) {
 				readChunk()
 			}
 		}
@@ -413,3 +402,55 @@ class BrowserRTC{
 	}
 }
 
+class FileArrayBuffer{
+	// for array buffer in send fike
+	static FNAME_POS = 0
+	static FDOWNLOAD_DONE = 1
+
+	// total extra data count added on file bytes array. The file name itself is excluded from this count
+	static FEXTRA_DATA_COUNT = 2
+
+	static FINISH_DOWNLOADING = 1
+	static NOT_YET_FINISH_DOWNLOADING = 0
+
+	static buildByteArrayForSending(fname, chunkBytes, finishDownloading){
+		const fnameLength = fname.length
+		const fnameArray = new TextEncoder().encode(fname)
+
+		const chunked = new Uint8Array (event.target.result)
+		const finalArrayBuffer = new Uint8Array(fnameLength + chunkBytes.length + FileArrayBuffer.FEXTRA_DATA_COUNT)
+
+		finalArrayBuffer[FileArrayBuffer.FNAME_POS] = fnameLength
+		
+		var done = FileArrayBuffer.NOT_YET_FINISH_DOWNLOADING
+		if (finishDownloading) {
+			done = FileArrayBuffer.FINISH_DOWNLOADING
+		}
+
+		finalArrayBuffer[FileArrayBuffer.FDOWNLOAD_DONE] = done
+
+		finalArrayBuffer.set(fnameArray,  FileArrayBuffer.FEXTRA_DATA_COUNT)
+		finalArrayBuffer.set(chunkBytes, fnameLength + FileArrayBuffer.FEXTRA_DATA_COUNT)
+
+		return finalArrayBuffer
+	}
+
+
+	static extractDataFromArrayBuffer(data){
+		const buffer = new Uint8Array(data)
+		const fileNameAscii = buffer.slice(FileArrayBuffer.FEXTRA_DATA_COUNT, buffer[FileArrayBuffer.FNAME_POS] + FileArrayBuffer.FEXTRA_DATA_COUNT)
+		const fileArrayBuffer = buffer.slice(buffer[FileArrayBuffer.FNAME_POS] + FileArrayBuffer.FEXTRA_DATA_COUNT, buffer.length)
+		const fileName =  new TextDecoder().decode(fileNameAscii)
+
+		var finishDownloading = false
+		if (buffer[FileArrayBuffer.FDOWNLOAD_DONE] == FileArrayBuffer.FINISH_DOWNLOADING) {
+			finishDownloading = true
+		}
+
+		return {
+			"filename": fileName,
+			"fileArrayBuffer": fileArrayBuffer,
+			"finishDownloading":  finishDownloading
+		}
+	}
+}
