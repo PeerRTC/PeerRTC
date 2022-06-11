@@ -8,6 +8,7 @@ class ResponseBuilder{
 	static RES_TYPE_NEW_PAYLOAD = "newpayload"
 	static RES_ALL_PEER_PAYLOADS = "allpeerpayloads"
 	static RES_PEER_PAYLOAD = "peerpayload"
+	static RES_PEER_CONNECT_DECLINE = "peerconnectdecline"
 
 	constructor(){
 		this.response = {}
@@ -75,6 +76,12 @@ class ResponseBuilder{
 		response.peerId = peerId
 		response.payload = payload
 
+	}
+
+	buildTypePeerConnectDecline(id){
+		const response = this.response
+		response.type = ResponseBuilder.RES_PEER_CONNECT_DECLINE
+		response.peerId = id
 	}
 }
 
