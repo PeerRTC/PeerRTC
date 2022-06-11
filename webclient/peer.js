@@ -4,16 +4,17 @@ class PeerRTC {
 	static REQ_TYPE_PEER_IDS = "peerids"
 	static REQ_TYPE_ADD_PAYLOAD = "addPayload"
 	static REQ_TYPE_GET_ALL_PEER_PAYLOADS = "getallpeerpayloads"
+	static REQ_TYPE_GET_PEER_PAYLOAD = "getpeerpayload"
 
 	constructor(serverURL, onConnectToServer) {	
 		this.serverURL = serverURL
 		this.isConnectedToServer = false
-		this.onPeerIds = null
 		this.id = null
 		this.socket = null
 		this.browserRTC = null
 		this.currentPeerId = null
 
+		this.onPeerIds = null
 		this.onmessage = null
 		this.oncloseP2P = null
 		this.onclose = null
@@ -41,6 +42,13 @@ class PeerRTC {
 		}))
 	}
 
+
+	getPeerPayload(peerId){
+		this.socket.send(JSON.stringify({
+			"type": PeerRTC.REQ_TYPE_GET_PEER_PAYLOAD,
+			"peerId": peerId
+		}))
+	}
 
 
 
@@ -80,8 +88,7 @@ class PeerRTC {
 	}
 
 	//retrieve all the peer ids from the server
-	getAllPeerIds(callback){
-		this.onPeerIds = callback
+	getAllPeerIds(){
 		this.socket.send(JSON.stringify({
 			"type": PeerRTC.REQ_TYPE_PEER_IDS,
 			"id": this.id
@@ -207,6 +214,14 @@ class PeerRTC {
 			const onpeerpayloads = this.onpeerpayloads
 			if (onpeerpayloads != null) {
 				onpeerpayloads(jsonData.payloads)
+			}
+		} else if (jsonData.type == "peerpayload") {
+			const onpeerpayloads = this.onpeerpayloads
+			if (onpeerpayloads != null) {
+				onpeerpayloads(JSON.stringify({
+					"id":jsonData.peerId,
+					"payload":jsonData.payload
+				}))
 			}
 		}
 	}
