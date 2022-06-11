@@ -151,7 +151,7 @@ class PeerRTC {
 	}
 
 
-	getAllFiles(){
+	getAllBlobFiles(){
 		return this.blobs.getAllFiles()
 	}
 
