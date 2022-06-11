@@ -23,7 +23,7 @@ function addNewClient(client){
 	})
 
 	client.on("close", () => {
-		clients.delete(client)
+		clients.delete(id)
 	})
 
 
