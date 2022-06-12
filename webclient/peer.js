@@ -18,6 +18,7 @@ class PeerRTC {
 		this.socket = null
 		this.browserRTC = null
 		this.currentPeerId = null
+		this.mediaStream = null
 
 		this.onpeerconnectsuccess = null
 		this.onpeerids = null
@@ -161,8 +162,9 @@ class PeerRTC {
 		this.blobs.deleteAllFiles()
 	}
 
-	addMediaTracks(stream){
-		this.browserRTC.addMediaTracks(stream)
+	// Strictly add media stream before calling connect on peer id
+	addMediaStream(stream){
+		this.mediaStream = stream
 	}
 
 
@@ -170,7 +172,7 @@ class PeerRTC {
 		var browserRTC  = this.browserRTC
 
 		if (!browserRTC) {
-			browserRTC = new BrowserRTC()
+			browserRTC = new BrowserRTC(this.mediaStream)
 		} else if (targetPeerId != this.currentPeerId) {
 			// ensures that only the current peer id is able to update the current connection
 			return
@@ -226,7 +228,8 @@ class PeerRTC {
 		
 
 		browserRTC.setCallbacks(onConnectionEstablished, oncloseP2P, onicecandididate, ontextmessage, onfilemessage, onnewtrack)
-		
+		browserRTC.addStreamToConnection()
+
 		if(isOffer){
 			browserRTC.createOffer()
 		} else{
@@ -324,12 +327,12 @@ class BrowserRTC{
 
 	
 
-	constructor(){
+	constructor(mediaStream){
 		const conn = new RTCPeerConnection()
 		conn.peerId = null
 
 		this.conn = conn
-
+		this.mediaStream = mediaStream
 		this.onmessage =  null
 		this.datachannel = null
 		this.onclose = null
@@ -373,9 +376,20 @@ class BrowserRTC{
 			onConnectionEstablished(this.conn.peerId)
 		}
 
+
 	}
 
 
+	// Don't call this before calling setCallBacks because this won't trigger ontrack event
+	// Don't call this after creating offer and answer because his won't trigger ontrack event
+	addStreamToConnection(){
+		const stream = this.mediaStream
+		if (stream) {
+			for(const track of stream.getTracks()){
+				this.conn.addTrack(track, stream)
+			}
+		}
+	}
 
 
 	createOffer(){
@@ -446,14 +460,6 @@ class BrowserRTC{
 		}
 	}
 
-
-	addMediaTracks(stream){
-		for(const track of stream.getTracks()){
-			this.conn.addTrack(track, stream)
-		}
-
-
-	}
 
 
 	initDataChannel(channel){
