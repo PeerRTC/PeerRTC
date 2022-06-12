@@ -1,7 +1,7 @@
 
 
 peer = new PeerRTC()
-peer.start( false, p=>{
+peer.start( true, p=>{
 	document.getElementById("peer-id").innerHTML = "My Id: " + p.id
 
 	p.ontextmessage = ((m)=>{
