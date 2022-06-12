@@ -102,6 +102,10 @@ class PeerRTC {
 	}
 
 	connect(peerId){
+		if (this.currentPeerId) {
+			throw Error("Please close the existing peer connection first with closeP2P")
+		}
+		
 		this.initBrowerRTC(peerId, true, null, (iceCandidates, sdp)=>{
 			this.socket.send(JSON.stringify({
 				"type": PeerRTC.REQ_TYPE_CONNECT_PEER,
@@ -178,7 +182,7 @@ class PeerRTC {
 
 	addMediaStream(stream){
 		// Strictly add media stream before calling connect on peer id
-		if (this.currentPeerId != null) {
+		if (this.currentPeerId) {
 			throw Error("Can't add media stream when already connected to peer")
 		}
 
