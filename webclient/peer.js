@@ -247,7 +247,6 @@ class PeerRTC {
 		} else if(jsonData.type == "incomingpeer"){
 			const peerId = jsonData.fromId
 			const accept = ()=>{
-				console.log(jsonData.sdp)
 				this.initBrowerRTC(jsonData.fromId, false, jsonData.sdp, (iceCandidates, sdp)=>{
 					this.browserRTC.addIceCandidates(jsonData.iceCandidates)
 					this.socket.send(JSON.stringify({
@@ -353,7 +352,6 @@ class BrowserRTC{
 		}
 
 		conn.ontrack = event => {
-			console.log("Aaa")
 			onnewtrack(event.track, event.streams)
 		}
 
