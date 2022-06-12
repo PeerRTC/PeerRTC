@@ -140,9 +140,9 @@ class PeerRTC {
 				}
 
 				socket.onmessage = data=>{
-					this.handleServerData(data)
+					this.handleServerData(data, resolve)
 				}
-				resolve()
+				
 			}
 
 		}).then(()=>onConnect(this))
@@ -256,12 +256,14 @@ class PeerRTC {
 
 	}
 
-	handleServerData(data){
+	handleServerData(data, resolve){
 		const jsonData = JSON.parse(data.data)
 		
 		if (jsonData.type == "initial") {
 			this.id = jsonData.id
 			this.connectionCreationTime = jsonData.connectionCreationTime
+			resolve()
+			
 		} else if(jsonData.type == "incomingpeer"){
 			const peerId = jsonData.fromId
 			const accept = ()=>{
