@@ -8,7 +8,7 @@ class PeerRTC {
 	static REQ_TYPE_DECLINE_PEER_CONNECT = "declinepeerconnect"
 
 	
-	// Configuration is the configurations used in web's RTCPeerConnection as found here - https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/RTCPeerConnection
+	// Configuration parameter is the configurations used in web's RTCPeerConnection as found here - https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/RTCPeerConnection
 	constructor(serverURL, configuration) {	
 		this.serverURL = serverURL
 		this.blobs = new BlobsStorage()
