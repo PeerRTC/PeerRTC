@@ -7,10 +7,21 @@ class PeerRTC {
 	static REQ_TYPE_GET_PEER_PAYLOAD = "getpeerpayload"
 	static REQ_TYPE_DECLINE_PEER_CONNECT = "declinepeerconnect"
 
-	constructor(serverURL, onConnectToServer) {	
+	// Url is the url of the node server
+	// Configuration is the configurations used in RTCPeerConnection as found here - https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/RTCPeerConnection
+	constructor(serverURL, configuration) {	
 		this.serverURL = serverURL
 		this.blobs = new BlobsStorage()
 		this.isConnectedToServer = false
+
+
+		if (!configuration) {
+			configuration = {
+				"iceServers": [{ "urls" : "stun:stun.l.google.com:19302" }]
+			}
+		} 
+
+		this.configuration = configuration
 
 		// declaring all global variables to null for easy visualization purposes only
 
@@ -173,7 +184,7 @@ class PeerRTC {
 		var browserRTC  = this.browserRTC
 
 		if (!browserRTC) {
-			browserRTC = new BrowserRTC(this.mediaStream)
+			browserRTC = new BrowserRTC(this.configuration, this.mediaStream)
 		} else if (targetPeerId != this.currentPeerId) {
 			// ensures that only the current peer id is able to update the current connection
 			return
@@ -327,16 +338,18 @@ class BrowserRTC{
 
 	
 
-	constructor(mediaStream){
-		const conn = new RTCPeerConnection()
+	constructor(configuration, mediaStream){
+		const conn = new RTCPeerConnection(configuration)
 		conn.peerId = null
 
 		this.conn = conn
 		this.mediaStream = mediaStream
+		this.closed = false
+
 		this.onmessage =  null
 		this.datachannel = null
 		this.onclose = null
-		this.closed = false
+
 	}
 
 	setCallbacks(onConnectionEstablished, onclose, onicecandidate , ontextmessage, onfilemessage, onnewtrack){
