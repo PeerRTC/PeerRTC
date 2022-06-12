@@ -1,9 +1,8 @@
 const ws = require("ws")
 const fs = require("fs")
 const signaling = require("./signaling.js")
-
-const rawData = fs.readFileSync("config.json")
-const config = JSON.parse(rawData)
+ 
+const config = JSON.parse(fs.readFileSync("config.json"))
 
 const HOST = config.host
 const PORT = config.port
