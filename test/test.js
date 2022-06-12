@@ -1,7 +1,7 @@
 
 
-peer = new PeerRTC()
-peer.start( true, p=>{
+peer = new PeerRTC("http://127.0.0.1:1000")
+peer.start( false, p=>{
 	document.getElementById("peer-id").innerHTML = "My Id: " + p.id
 
 	p.ontextmessage = ((m)=>{
