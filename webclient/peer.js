@@ -128,9 +128,14 @@ class PeerRTC {
 
 
 	
-	start(onConnect){
+	start(isSecure, onConnect){
+		var scheme = "ws://"
+		if (isSecure) {
+			scheme = "wss://"
+		}
+		
 		// Convert the provided server url to a web socket url
-		const webSocketURL = "ws://" + this.serverURL.replaceAll(/((http(s{0,1}))|(ws(s{0,1}))):\/\//g, "")
+		const webSocketURL =scheme + this.serverURL.replaceAll(/((http(s{0,1}))|(ws(s{0,1}))):\/\//g, "")
 
 		new Promise(async(resolve)=>{
 			const socket = new WebSocket(webSocketURL)
