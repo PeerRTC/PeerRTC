@@ -7,21 +7,28 @@ class PeerRTC {
 	static REQ_TYPE_GET_PEER_PAYLOAD = "getpeerpayload"
 	static REQ_TYPE_DECLINE_PEER_CONNECT = "declinepeerconnect"
 
+	// This server is not stable. It is adviseable to use own.
+	static DEFAULT_SERVER_URL = "https://peer-rtc-sever.herokuapp.com/"
+
 	
 	// Configuration parameter is the configurations used in web's RTCPeerConnection as found here - https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/RTCPeerConnection
 	constructor(serverURL, configuration) {	
-		this.serverURL = serverURL
-		this.blobs = new BlobsStorage()
-		this.isConnectedToServer = false
-
-
+		
+		if (!serverURL) {
+			serverURL = PeerRTC.DEFAULT_SERVER_URL
+		}
+		
 		if (!configuration) {
 			configuration = {
 				"iceServers": [{ "urls" : "stun:stun.l.google.com:19302" }]
 			}
 		} 
 
+		
+		this.serverURL = serverURL
 		this.configuration = configuration
+		this.blobs = new BlobsStorage()
+		this.isConnectedToServer = false
 
 		// declaring all global variables to null for easy visualization purposes only
 
