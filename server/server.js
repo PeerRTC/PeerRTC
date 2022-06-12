@@ -1,4 +1,3 @@
-
 const ws = require("ws")
 const fs = require("fs")
 const signaling = require("./signaling.js")
