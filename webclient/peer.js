@@ -7,8 +7,8 @@ class PeerRTC {
 	static REQ_TYPE_GET_PEER_PAYLOAD = "getpeerpayload"
 	static REQ_TYPE_DECLINE_PEER_CONNECT = "declinepeerconnect"
 
-	// Url is the url of the node server
-	// Configuration is the configurations used in RTCPeerConnection as found here - https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/RTCPeerConnection
+	
+	// Configuration is the configurations used in web's RTCPeerConnection as found here - https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/RTCPeerConnection
 	constructor(serverURL, configuration) {	
 		this.serverURL = serverURL
 		this.blobs = new BlobsStorage()
@@ -174,8 +174,14 @@ class PeerRTC {
 		this.blobs.deleteAllFiles()
 	}
 
-	// Strictly add media stream before calling connect on peer id
+
+
 	addMediaStream(stream){
+		// Strictly add media stream before calling connect on peer id
+		if (this.currentPeerId != null) {
+			throw Error("Can't add media stream when already connected to peer")
+		}
+
 		this.mediaStream = stream
 	}
 
