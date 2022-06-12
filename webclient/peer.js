@@ -124,6 +124,7 @@ class PeerRTC {
 			socket.onopen= ()=>{
 				this.isConnectedToServer = true
 				socket.onclose =()=>{
+					this.isConnectedToServer = false
 					this.close()
 				}
 
