@@ -1,6 +1,0 @@
-{
-	"port": 1000,
-	"isClientIdsPublic": true,	
-	"clientMaxUnreachableTime": 5000
-
-}
