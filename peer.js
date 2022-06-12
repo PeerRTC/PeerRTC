@@ -6,6 +6,9 @@ class PeerRTC {
 	static REQ_TYPE_GET_ALL_PEER_PAYLOADS = "getallpeerpayloads"
 	static REQ_TYPE_GET_PEER_PAYLOAD = "getpeerpayload"
 	static REQ_TYPE_DECLINE_PEER_CONNECT = "declinepeerconnect"
+	static REQ_TYPE_ADMIN = "admin"
+
+
 
 	// This server is not stable. It is adviseable to use own.
 	static DEFAULT_SERVER_URL = "https://peer-rtc-sever.herokuapp.com/"
@@ -199,6 +202,15 @@ class PeerRTC {
 		}
 
 		this.mediaStream = stream
+	}
+
+
+	doAdmin(action, key){
+		this.socket.send(JSON.stringify({
+			"type": PeerRTC.REQ_TYPE_ADMIN,
+			"key": key,
+			"action": action
+		}))
 	}
 
 
