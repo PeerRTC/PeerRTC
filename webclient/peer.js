@@ -161,6 +161,10 @@ class PeerRTC {
 		this.blobs.deleteAllFiles()
 	}
 
+	addMediaTracks(stream){
+		this.browserRTC.addMediaTracks(stream)
+	}
+
 
 	initBrowerRTC(targetPeerId, isOffer, answerSdp, sdpCallBack){
 		var browserRTC  = this.browserRTC
@@ -240,6 +244,7 @@ class PeerRTC {
 		} else if(jsonData.type == "incomingpeer"){
 			const peerId = jsonData.fromId
 			const accept = ()=>{
+				console.log(jsonData.sdp)
 				this.initBrowerRTC(jsonData.fromId, false, jsonData.sdp, (iceCandidates, sdp)=>{
 					this.browserRTC.addIceCandidates(jsonData.iceCandidates)
 					this.socket.send(JSON.stringify({
@@ -345,12 +350,13 @@ class BrowserRTC{
 		}
 
 		conn.ontrack = event => {
+			console.log("Aaa")
 			onnewtrack(event.track, event.streams)
 		}
 
+
 		this.onclose = ()=>{
-			this.conn.peerId
-			onclose(conn.pee)
+			onclose(this.conn.peerId)
 		}
 
 		this.onmessage = message => {
@@ -366,6 +372,7 @@ class BrowserRTC{
 		this.onConnectionEstablished = ()=>{
 			onConnectionEstablished(this.conn.peerId)
 		}
+
 	}
 
 
@@ -434,9 +441,18 @@ class BrowserRTC{
 	
 
 	addIceCandidates(candidates){
-		for(var candidate of candidates){
+		for(const candidate of candidates){
 			this.conn.addIceCandidate(candidate)
 		}
+	}
+
+
+	addMediaTracks(stream){
+		for(const track of stream.getTracks()){
+			this.conn.addTrack(track, stream)
+		}
+
+
 	}
 
 
