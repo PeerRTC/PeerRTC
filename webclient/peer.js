@@ -357,7 +357,7 @@ class BrowserRTC{
 
 
 		this.onclose = ()=>{
-			onclose(this.conn.peerId)
+			onclose()
 		}
 
 		this.onmessage = message => {
