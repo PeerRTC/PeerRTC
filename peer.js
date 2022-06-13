@@ -64,7 +64,7 @@ class PeerRTC {
 		this.onpeerconnectsuccess = null
 		this.onpeerids = null
 		this.ontextmessage = null
-		this.onfilemessage
+		this.onfilemessage = null
 		this.oncloseP2P = null
 		this.onclose = null
 		this.onnewpayload = null
@@ -283,10 +283,10 @@ class PeerRTC {
 			
 		}
 
-		const onfilemessage = (fileName, fileBytesArray, finishDownloading) =>{
+		const onfilemessage = (fileName, fileTotalSize, fileBytesArray, finishDownloading) =>{
 			const onfilemessage = this.onfilemessage
 			if (onfilemessage ) {
-				onfilemessage(fileName, fileBytesArray, finishDownloading)
+				onfilemessage(fileName, fileTotalSize, fileBytesArray, finishDownloading)
 			} 
 		}
 
@@ -475,7 +475,7 @@ class BrowserRTC{
 			const data = message.data
 			if (data instanceof ArrayBuffer) {
 				const extracted = FileArrayBuffer.extractDataFromArrayBuffer(data)
-				onfilemessage(extracted.fileName, extracted.fileArrayBuffer, extracted.finishDownloading)
+				onfilemessage(extracted.fileName, extracted.fileTotalSize, extracted.fileArrayBuffer, extracted.finishDownloading)
 			} else{
 				ontextmessage(data.toString())
 			}
@@ -545,9 +545,10 @@ class BrowserRTC{
 
 		fileReader.onload = event=>{
 			const chunked = new Uint8Array (event.target.result)
-			const finishDownloading = offset + chunked.byteLength >= file.size
+			const totalFileSize = file.size
+			const finishDownloading = offset + chunked.byteLength >= totalFileSize
 
-			const finalArrayBuffer = FileArrayBuffer.buildByteArrayForSending(fname, chunked, finishDownloading)
+			const finalArrayBuffer = FileArrayBuffer.buildByteArrayForSending(fname, totalFileSize, chunked, finishDownloading)
 
 			offset += chunked.byteLength
 
@@ -598,32 +599,43 @@ class BrowserRTC{
 class FileArrayBuffer{
 	// for array buffer in send fike
 	static FNAME_POS = 0
-	static FDOWNLOAD_DONE = 1
+	static FTOTAL_SIZE_POS = 1
+	static FDOWNLOAD_DONE_POS = 2
 
 	// total extra data count added on file bytes array. The file name itself is excluded from this count
-	static FEXTRA_DATA_COUNT = 2
+	static FEXTRA_DATA_COUNT = 3
 
 	static FINISH_DOWNLOADING = 1
 	static NOT_YET_FINISH_DOWNLOADING = 0
 
-	static buildByteArrayForSending(fname, chunkBytes, finishDownloading){
+	static buildByteArrayForSending(fname, totalFileSize, chunkBytes, finishDownloading){
 		const fnameLength = fname.length
 		const fnameArray = new TextEncoder().encode(fname)
+		const fileSizeString = totalFileSize.toString()
+		const fileSizeLength = fileSizeString.length
 
 		const chunked = new Uint8Array (event.target.result)
-		const finalArrayBuffer = new Uint8Array(fnameLength + chunkBytes.length + FileArrayBuffer.FEXTRA_DATA_COUNT)
+		const finalArrayBuffer = new Uint8Array(fnameLength + chunkBytes.length + fileSizeLength + FileArrayBuffer.FEXTRA_DATA_COUNT)
 
 		finalArrayBuffer[FileArrayBuffer.FNAME_POS] = fnameLength
-		
+		finalArrayBuffer[FileArrayBuffer.FTOTAL_SIZE_POS] = fileSizeLength
+
 		var done = FileArrayBuffer.NOT_YET_FINISH_DOWNLOADING
 		if (finishDownloading) {
 			done = FileArrayBuffer.FINISH_DOWNLOADING
 		}
 
-		finalArrayBuffer[FileArrayBuffer.FDOWNLOAD_DONE] = done
+		finalArrayBuffer[FileArrayBuffer.FDOWNLOAD_DONE_POS] = done
 
-		finalArrayBuffer.set(fnameArray,  FileArrayBuffer.FEXTRA_DATA_COUNT)
-		finalArrayBuffer.set(chunkBytes, fnameLength + FileArrayBuffer.FEXTRA_DATA_COUNT)
+
+		const fileSizeArray = []
+		for(const num of fileSizeString){
+			fileSizeArray.push(num)
+		}
+
+		finalArrayBuffer.set(fileSizeArray, FileArrayBuffer.FEXTRA_DATA_COUNT)
+		finalArrayBuffer.set(fnameArray,  FileArrayBuffer.FEXTRA_DATA_COUNT + fileSizeLength)
+		finalArrayBuffer.set(chunkBytes,FileArrayBuffer.FEXTRA_DATA_COUNT + fileSizeLength + fnameLength)
 
 		return finalArrayBuffer
 	}
@@ -631,17 +643,26 @@ class FileArrayBuffer{
 
 	static extractDataFromArrayBuffer(data){
 		const buffer = new Uint8Array(data)
-		const fileNameAscii = buffer.slice(FileArrayBuffer.FEXTRA_DATA_COUNT, buffer[FileArrayBuffer.FNAME_POS] + FileArrayBuffer.FEXTRA_DATA_COUNT)
-		const fileArrayBuffer = buffer.slice(buffer[FileArrayBuffer.FNAME_POS] + FileArrayBuffer.FEXTRA_DATA_COUNT, buffer.length)
+		const fileSizeLength = buffer[FileArrayBuffer.FTOTAL_SIZE_POS]
+		const fileNameLength = buffer[FileArrayBuffer.FNAME_POS]
+
+		const fileTotalSizeEnd = FileArrayBuffer.FEXTRA_DATA_COUNT + fileSizeLength
+		const fileNameAsciiEnd = fileTotalSizeEnd + fileNameLength
+
+		const fileTotalSize = parseInt(buffer.slice(FileArrayBuffer.FEXTRA_DATA_COUNT, fileTotalSizeEnd).join(""))
+		const fileNameAscii = buffer.slice(fileTotalSizeEnd,  fileNameAsciiEnd)
+		const fileArrayBuffer = buffer.slice(fileNameAsciiEnd, buffer.length)
+
 		const fileName =  new TextDecoder().decode(fileNameAscii)
 
 		var finishDownloading = false
-		if (buffer[FileArrayBuffer.FDOWNLOAD_DONE] == FileArrayBuffer.FINISH_DOWNLOADING) {
+		if (buffer[FileArrayBuffer.FDOWNLOAD_DONE_POS] == FileArrayBuffer.FINISH_DOWNLOADING) {
 			finishDownloading = true
 		}
 
 		return {
 			"fileName": fileName,
+			"fileTotalSize": fileTotalSize,
 			"fileArrayBuffer": fileArrayBuffer,
 			"finishDownloading":  finishDownloading
 		}

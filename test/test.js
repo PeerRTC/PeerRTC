@@ -12,9 +12,8 @@ peer.start( false, p=>{
 	
 	
 
-	p.onfilemessage = ((fname, fileBytesArray, done)=>{
+	p.onfilemessage = ((fname, fileTotalSize, fileBytesArray, done)=>{
 		p.updateBlob(fname, fileBytesArray)
-		
 		if (done) {
 			const blob = p.getBlob(fname)
 			blobUrl = URL.createObjectURL(blob)
