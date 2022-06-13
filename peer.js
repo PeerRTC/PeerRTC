@@ -1,4 +1,5 @@
 class PeerRTC {
+	// server request constants
 	static REQ_TYPE_CONNECT_PEER = "connectpeer"
 	static REQ_TYPE_ANSWER_PEER = "answerpeer"
 	static REQ_TYPE_PEER_IDS = "peerids"
@@ -7,9 +8,25 @@ class PeerRTC {
 	static REQ_TYPE_GET_ALL_PEER_PAYLOADS = "getallpeerpayloads"
 	static REQ_TYPE_GET_PEER_PAYLOAD = "getpeerpayload"
 	static REQ_TYPE_DECLINE_PEER_CONNECT = "declinepeerconnect"
+
+
+	// response related constants
+	static RES_TYPE_INITIAL = "initial"
+	static RES_TYPE_INCOMING_PEER = "incomingpeer"
+	static RES_TYPE_ANSWER_PEER = "answerpeer"
+	static RES_TYPE_PEER_IDS = "peerids"
+	static RES_TYPE_NEW_PAYLOAD = "newpayload"
+	static RES_TYPE_NEW_PRIVATE_PAYLOAD = "newprivatepayload"
+	static RES_ALL_PEER_PAYLOADS = "allpeerpayloads"
+	static RES_PEER_PAYLOAD = "peerpayload"
+	static RES_PEER_CONNECT_DECLINE = "peerconnectdecline"
+	static RES_TYPE_ADMIN_BROADCAST_DATA = "broadcastdata"
+	static RES_TYPE_ADMIN_GET_ALL_CLIENTS_DATA = "getallclientsdata"
+	static RES_TYPE_ADMIN_ACTION_DECLINE = "adminactiondecline"
+
+
+	// admin related constants
 	static REQ_TYPE_ADMIN = "admin"
-
-
 	static ADMIN_ACTION_BROADCAST_DATA = "broadcastdata"
 	static ADMIN_ACTION_GET_ALL_CLIENTS_DATA = "getallclientsdata"
 
@@ -310,12 +327,12 @@ class PeerRTC {
 	handleServerData(data, resolve){
 		const jsonData = JSON.parse(data.data)
 		
-		if (jsonData.type == "initial") {
+		if (jsonData.type == PeerRTC.RES_TYPE_INITIAL) {
 			this.id = jsonData.id
 			this.connectionCreationTime = jsonData.connectionCreationTime
 			resolve()
 			
-		} else if(jsonData.type == "incomingpeer"){
+		} else if(jsonData.type == PeerRTC.RES_TYPE_INCOMING_PEER){
 			const peerId = jsonData.fromId
 			const accept = ()=>{
 				this.initBrowerRTC(jsonData.fromId, false, jsonData.sdp, (iceCandidates, sdp)=>{
@@ -346,34 +363,34 @@ class PeerRTC {
 			
 		}
 
-		 else if(jsonData.type == "answerpeer"){
+		 else if(jsonData.type == PeerRTC.RES_TYPE_ANSWER_PEER){
 		 	const browserRTC = this.browserRTC
 		 	browserRTC.setRemoteDescription(jsonData.fromId, jsonData.sdp).then(o=>{
 		 		browserRTC.addIceCandidates(jsonData.iceCandidates)
 		 	}).catch(e=>{})
 
-		} else if (jsonData.type == "peerids") {
+		} else if (jsonData.type == PeerRTC.RES_TYPE_PEER_IDS) {
 			const onpeerids = this.onpeerids
 			if (onpeerids ) {
 				onpeerids(jsonData.ids)
 			}
-		} else if (jsonData.type == "newpayload") {
+		} else if (jsonData.type == PeerRTC.RES_TYPE_NEW_PAYLOAD) {
 			const onnewpayload = this.onnewpayload
 			if (onnewpayload ) {
 				onnewpayload(jsonData.payload)
 			}
-		}  else if (jsonData.type == "newprivatepayload") {
+		}  else if (jsonData.type == PeerRTC.RES_TYPE_NEW_PRIVATE_PAYLOAD) {
 			const onnewprivatepayload = this.onnewprivatepayload
 			if(onnewprivatepayload){
 				onnewprivatepayload(jsonData.payload)
 			}
 
-		} else if (jsonData.type == "allpeerpayloads") {
+		} else if (jsonData.type == PeerRTC.RES_ALL_PEER_PAYLOADS) {
 			const onpeerpayloads = this.onpeerpayloads
 			if (onpeerpayloads ) {
 				onpeerpayloads(jsonData.payloads)
 			}
-		} else if (jsonData.type == "peerpayload") {
+		} else if (jsonData.type == PeerRTC.RES_PEER_PAYLOAD) {
 			const onpeerpayloads = this.onpeerpayloads
 			if (onpeerpayloads ) {
 				onpeerpayloads(JSON.stringify({
@@ -381,7 +398,7 @@ class PeerRTC {
 					"payload":jsonData.payload
 				}))
 			}
-		} else if (jsonData.type == "peerconnectdecline") {
+		} else if (jsonData.type == PeerRTC.RES_PEER_CONNECT_DECLINE) {
 			const onpeerconnectdecline = this.onpeerconnectdecline
 			if (onpeerconnectdecline ) {
 				onpeerconnectdecline(jsonData.peerId)
@@ -396,7 +413,7 @@ class PeerRTC {
 			if (onadmingetallclientsdata) {
 				onadmingetallclientsdata(jsonData.data)
 			}
-		} else if (jsonData.type == "adminactiondecline") {
+		} else if (jsonData.type == PeerRTC.RES_TYPE_ADMIN_ACTION_DECLINE) {
 			const onadminactiondecline = this.onadminactiondecline
 			if (onadminactiondecline) {
 				onadminactiondecline()
