@@ -9,6 +9,7 @@ class PeerRTC {
 	static REQ_TYPE_ADMIN = "admin"
 
 
+	static ADMIN_ACTION_BROADCAST_DATA = "broadcastdata"
 
 	// This server is not stable. It is adviseable to use own.
 	static DEFAULT_SERVER_URL = "https://peer-rtc-sever.herokuapp.com/"
@@ -52,6 +53,8 @@ class PeerRTC {
 		this.onpeerconnectrequest= null
 		this.onpeerconnectdecline = null
 		this.onnewtrack = null
+
+		this.onadminbroadcastdata = null
 	}
 
 	sendText(text){
@@ -205,11 +208,12 @@ class PeerRTC {
 	}
 
 
-	doAdmin(action, key){
+	adminBroadcastData(key, data){
 		this.socket.send(JSON.stringify({
 			"type": PeerRTC.REQ_TYPE_ADMIN,
 			"key": key,
-			"action": action
+			"action": PeerRTC.ADMIN_ACTION_BROADCAST_DATA,
+			"data": data
 		}))
 	}
 
@@ -356,6 +360,11 @@ class PeerRTC {
 			const onpeerconnectdecline = this.onpeerconnectdecline
 			if (onpeerconnectdecline ) {
 				onpeerconnectdecline(jsonData.peerId)
+			}
+		} else if(jsonData.type == PeerRTC.ADMIN_ACTION_BROADCAST_DATA){
+			const onadminbroadcastdata = this.onadminbroadcastdata
+			if (onadminbroadcastdata) {
+				onadminbroadcastdata(jsonData.data)
 			}
 		}
 	}
