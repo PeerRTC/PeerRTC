@@ -1,7 +1,15 @@
 const sendingFiles = new Map()
 const receivingFiles = new Map()
 
-peer = new PeerRTC("http://127.0.0.1:1000")
+
+
+const serverURL = null	
+
+//used in web's RTCPeerConnection as found here - https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/RTCPeerConnection
+const configurations = {}	 
+
+
+peer = new PeerRTC(serverURL, configurations)
 peer.start( false, p=>{
 	document.getElementById("peer-id").innerHTML = "My Id: " + p.id
 
