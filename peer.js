@@ -2,7 +2,8 @@ class PeerRTC {
 	static REQ_TYPE_CONNECT_PEER = "connectpeer"
 	static REQ_TYPE_ANSWER_PEER = "answerpeer"
 	static REQ_TYPE_PEER_IDS = "peerids"
-	static REQ_TYPE_ADD_PAYLOAD = "addPayload"
+	static REQ_TYPE_ADD_PAYLOAD = "addpayload"
+	static REQ_TYPE_ADD_PRIVATE_PAYLOAD = "addprivatepayload"
 	static REQ_TYPE_GET_ALL_PEER_PAYLOADS = "getallpeerpayloads"
 	static REQ_TYPE_GET_PEER_PAYLOAD = "getpeerpayload"
 	static REQ_TYPE_DECLINE_PEER_CONNECT = "declinepeerconnect"
@@ -10,6 +11,7 @@ class PeerRTC {
 
 
 	static ADMIN_ACTION_BROADCAST_DATA = "broadcastdata"
+	static ADMIN_ACTION_GET_ALL_CLIENTS_DATA = "getallclientsdata"
 
 	// This server is not stable. It is adviseable to use own.
 	static DEFAULT_SERVER_URL = "https://peer-rtc-sever.herokuapp.com/"
@@ -49,12 +51,14 @@ class PeerRTC {
 		this.oncloseP2P = null
 		this.onclose = null
 		this.onnewpayload = null
+		this.onnewprivatepayload = null
 		this.onpeerpayloads = null
 		this.onpeerconnectrequest= null
 		this.onpeerconnectdecline = null
 		this.onnewtrack = null
 
 		this.onadminbroadcastdata = null
+		this.onadmingetallclientsdata = null
 	}
 
 	sendText(text){
@@ -70,6 +74,13 @@ class PeerRTC {
 	addPayload(jsonData){
 		this.socket.send(JSON.stringify({
 			"type":PeerRTC.REQ_TYPE_ADD_PAYLOAD,
+			"payload": JSON.stringify(jsonData)
+		}))
+	}
+
+	addPrivatePayload(jsonData){
+		this.socket.send(JSON.stringify({
+			"type": PeerRTC.REQ_TYPE_ADD_PRIVATE_PAYLOAD,
 			"payload": JSON.stringify(jsonData)
 		}))
 	}
@@ -217,6 +228,13 @@ class PeerRTC {
 		}))
 	}
 
+	adminGetAllClientsData(key){
+		this.socket.send(JSON.stringify({
+			"type": PeerRTC.REQ_TYPE_ADMIN,
+			"key": key,
+			"action": PeerRTC.ADMIN_ACTION_GET_ALL_CLIENTS_DATA
+		}))
+	}
 
 	initBrowerRTC(targetPeerId, isOffer, answerSdp, sdpCallBack){
 		var browserRTC  = this.browserRTC
@@ -343,6 +361,12 @@ class PeerRTC {
 			if (onnewpayload ) {
 				onnewpayload(jsonData.payload)
 			}
+		}  else if (jsonData.type == "newprivatepayload") {
+			const onnewprivatepayload = this.onnewprivatepayload
+			if(onnewprivatepayload){
+				onnewprivatepayload(jsonData.payload)
+			}
+
 		} else if (jsonData.type == "allpeerpayloads") {
 			const onpeerpayloads = this.onpeerpayloads
 			if (onpeerpayloads ) {
@@ -365,6 +389,11 @@ class PeerRTC {
 			const onadminbroadcastdata = this.onadminbroadcastdata
 			if (onadminbroadcastdata) {
 				onadminbroadcastdata(jsonData.data)
+			}
+		} else if (jsonData.type == PeerRTC.ADMIN_ACTION_GET_ALL_CLIENTS_DATA) {
+			const onadmingetallclientsdata = this.onadmingetallclientsdata
+			if (onadmingetallclientsdata) {
+				onadmingetallclientsdata(jsonData.data)
 			}
 		}
 	}
