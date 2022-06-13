@@ -50,6 +50,8 @@ peer.start( false, p=>{
 		
 		if (done) {
 			display = ""
+			receivingFiles.delete(fname)
+
 			const blob = p.getBlob(fname)
 			blobUrl = URL.createObjectURL(blob)
 			p.deleteBlob(fname)
