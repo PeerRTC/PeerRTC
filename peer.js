@@ -59,6 +59,7 @@ class PeerRTC {
 
 		this.onadminbroadcastdata = null
 		this.onadmingetallclientsdata = null
+		this.onadminactiondecline = null
 	}
 
 	sendText(text){
@@ -394,6 +395,11 @@ class PeerRTC {
 			const onadmingetallclientsdata = this.onadmingetallclientsdata
 			if (onadmingetallclientsdata) {
 				onadmingetallclientsdata(jsonData.data)
+			}
+		} else if (jsonData.type == "adminactiondecline") {
+			const onadminactiondecline = this.onadminactiondecline
+			if (onadminactiondecline) {
+				onadminactiondecline()
 			}
 		}
 	}

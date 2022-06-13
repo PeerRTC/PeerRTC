@@ -103,6 +103,10 @@ peer.start( false, p=>{
 		console.log(clientsData)
 	}
 
+	p.onadminactiondecline = ()=> {
+		console.log("Failed to execute admin only action")
+	}
+
 	navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(stream =>{
 		document.getElementById("myVideo").srcObject = stream
 		p.addMediaStream(stream)
