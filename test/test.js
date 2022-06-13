@@ -11,6 +11,10 @@ peer.start( false, p=>{
 
 	
 	
+	p.onsendfilemessage = (file, fileSizeSent)=>{
+		console.log(fileSizeSent)
+	}
+
 
 	p.onfilemessage = ((fname, fileTotalSize, fileBytesArray, done)=>{
 		p.updateBlob(fname, fileBytesArray)

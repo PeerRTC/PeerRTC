@@ -65,6 +65,7 @@ class PeerRTC {
 		this.onpeerids = null
 		this.ontextmessage = null
 		this.onfilemessage = null
+		this.onsendfilemessage = null
 		this.oncloseP2P = null
 		this.onclose = null
 		this.onnewpayload = null
@@ -311,9 +312,17 @@ class PeerRTC {
 
 		}
 
+
+		const onsendfilemessage = (file, fileSizeSent)=>{
+			const onsendfilemessage = this.onsendfilemessage
+			if (onsendfilemessage) {
+				onsendfilemessage(file, fileSizeSent)
+			}
+		}
+
 		
 
-		browserRTC.setCallbacks(onConnectionEstablished, oncloseP2P, onicecandididate, ontextmessage, onfilemessage, onnewtrack)
+		browserRTC.setCallbacks(onConnectionEstablished, oncloseP2P, onicecandididate, ontextmessage, onfilemessage, onsendfilemessage, onnewtrack)
 		browserRTC.addStreamToConnection()
 
 		if(isOffer){
@@ -443,13 +452,14 @@ class BrowserRTC{
 		this.mediaStream = mediaStream
 		this.closed = false
 
+		this.onsendfilemessage = null
 		this.onmessage =  null
 		this.datachannel = null
 		this.onclose = null
 
 	}
 
-	setCallbacks(onConnectionEstablished, onclose, onicecandidate , ontextmessage, onfilemessage, onnewtrack){
+	setCallbacks(onConnectionEstablished, onclose, onicecandidate , ontextmessage, onfilemessage, onsendfilemessage, onnewtrack){
 		const conn = this.conn
 		const iceCandidates = []
 		conn.onicecandidate  = event =>{
@@ -484,6 +494,8 @@ class BrowserRTC{
 		this.onConnectionEstablished = ()=>{
 			onConnectionEstablished(this.conn.peerId)
 		}
+
+		this.onsendfilemessage = onsendfilemessage
 
 
 	}
@@ -544,6 +556,7 @@ class BrowserRTC{
 		}
 
 		fileReader.onload = event=>{
+			const onsendfilemessage = this.onsendfilemessage
 			const chunked = new Uint8Array (event.target.result)
 			const totalFileSize = file.size
 			const finishDownloading = offset + chunked.byteLength >= totalFileSize
@@ -553,6 +566,12 @@ class BrowserRTC{
 			offset += chunked.byteLength
 
 			this.datachannel.send(finalArrayBuffer)
+
+			if (onsendfilemessage) {
+				onsendfilemessage(file, chunked.byteLength)
+			}
+
+
 
 			if (!finishDownloading) {
 				readChunk()
