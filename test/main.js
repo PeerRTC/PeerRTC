@@ -5,10 +5,10 @@ peer = new PeerRTC("http://127.0.0.1:1000")
 peer.start( false, p=>{
 	document.getElementById("peer-id").innerHTML = "My Id: " + p.id
 
-	p.ontextmessage = ((m)=>{
+	p.ontextmessage = (m)=>{
 		addMessageToMessageBox("Other", m)
 		
-	})
+	}
 
 	
 	
@@ -32,7 +32,7 @@ peer.start( false, p=>{
 	}
 
 
-	p.onfilemessage = ((fname, fileTotalSize, fileBytesArray, done)=>{
+	p.onfilemessage = (fname, fileTotalSize, fileBytesArray, done)=>{
 		var currentReceivedSize = receivingFiles.get(fname)
 
 		const receivedSize = fileBytesArray.byteLength
@@ -65,38 +65,38 @@ peer.start( false, p=>{
 		}
 
 		document.getElementById("received").innerText = display
-	})
+	}
 
-	p.oncloseP2P = (()=>{
+	p.oncloseP2P = ()=>{
 		document.getElementById("connected-to").innerText = ""
 		document.getElementById("otherVideo").srcObject = null
-	})
+	}
 
 
-	p.onclose = (()=>{
+	p.onclose = ()=>{
 		document.getElementById("connected-to").innerText = ""
 		console.log("Server closed ")
-	})
+	}
 
-	p.onnewpayload = ((payload)=>{
+	p.onnewpayload = (payload)=>{
 		console.log("New Payload: " + payload)
-	})
+	}
 
 
 	p.onnewprivatepayload = payload =>{
 		console.log("New Private Payload: " + payload)
 	}
 
-	p.onpeerpayloads = ((payloads)=>{
+	p.onpeerpayloads = (payloads)=>{
 		console.log("Peer Payloads: " + payloads)
-	})
+	}
 
-	p.onpeerids = ((ids) => {
+	p.onpeerids = (ids) => {
 		console.log("Peer Ids: " + ids)
-	})
+	}
 
 
-	p.onpeerconnectrequest = ((peerId, accept, decline)=>{
+	p.onpeerconnectrequest = (peerId, accept, decline)=>{
 		const container = document.getElementById("incoming-connection-container")
 		const messageDisplay = document.getElementById("incoming-connection-message")
 		const acceptButton = document.getElementById("accept")
@@ -117,11 +117,11 @@ peer.start( false, p=>{
 			buttonClick(decline)
 		}
 
-	})
+	}
 
-	p.onpeerconnectdecline = (peerId => {
+	p.onpeerconnectdecline = peerId => {
 		alert("Decline request connect to " + peerId)
-	})
+	}
 
 	p.onnewtrack = (newTrack, trackStreams) => {
 		document.getElementById("otherVideo").srcObject = trackStreams[0]
