@@ -12,7 +12,10 @@
 		Peer Id:
 		<input type="text" id="peer-id-input"/> 
 		<input type="button" value="Connect" onclick="connectPeer()">
-		<input type="button" value="End Connection" onclick="endConnect()"><br/><br/>
+		<input type="button" value="End Connection" onclick="endConnect()"><br/>
+
+		<div id="connected-to"></div>
+		<br/><br/>
 
 
 		<div id="incoming-connection-container" style="visibility: hidden;">
@@ -27,9 +30,11 @@
 		<video width="200" height="200" id="otherVideo" autoplay controls> </video><br/><br/>
 
 		<input type="file" id="file-input">
-		<input type="button" value="Send File" onclick="sendFile()"> <br/><br/>
-
-		<a id="incoming-file"/><br/><br/>
+		<input type="button" value="Send File" onclick="sendFile()"> <br/>
+		<div id="downloaded"></div>
+		<div id="received"></div>
+		<br/><br/>
+		<a id="incoming-file"></a><br/><br/>
 
 		<input type="text" id="message-input"/>
 		<input type="button" value="Send" onclick="sendMessage()"> <br/>

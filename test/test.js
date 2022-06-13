@@ -1,4 +1,5 @@
-
+const sendingFiles = new Map()
+const receivingFiles = new Map()
 
 peer = new PeerRTC("http://127.0.0.1:1000")
 peer.start( false, p=>{
@@ -12,13 +13,43 @@ peer.start( false, p=>{
 	
 	
 	p.onsendfilemessage = (file, fileSizeSent)=>{
-		console.log(fileSizeSent)
+		var currentDownloaded = sendingFiles.get(file)
+		if (currentDownloaded) {
+			currentDownloaded += fileSizeSent
+		} else{
+			currentDownloaded = fileSizeSent
+		}
+
+		
+		if (currentDownloaded < file.size) {
+			sendingFiles.set(file, currentDownloaded)
+			display = `${currentDownloaded}/${file.size} bytes`
+		} else{
+			display = ""
+			sendingFiles.delete(file)
+		}
+		document.getElementById("downloaded").innerText = display
 	}
 
 
 	p.onfilemessage = ((fname, fileTotalSize, fileBytesArray, done)=>{
+		var currentReceivedSize = receivingFiles.get(fname)
+
+		const receivedSize = fileBytesArray.byteLength
+		if (currentReceivedSize) {
+			currentReceivedSize += fileBytesArray.byteLength
+		} else{
+			currentReceivedSize = receivedSize
+		}
+
+		receivingFiles.set(fname, currentReceivedSize)
+		var display = `${currentReceivedSize}/${fileTotalSize} bytes`
+
 		p.updateBlob(fname, fileBytesArray)
+
+		
 		if (done) {
+			display = ""
 			const blob = p.getBlob(fname)
 			blobUrl = URL.createObjectURL(blob)
 			p.deleteBlob(fname)
@@ -30,14 +61,18 @@ peer.start( false, p=>{
 			
 			
 		}
+
+		document.getElementById("received").innerText = display
 	})
 
 	p.oncloseP2P = (()=>{
+		document.getElementById("connected-to").innerText = ""
 		document.getElementById("otherVideo").srcObject = null
 	})
 
 
 	p.onclose = (()=>{
+		document.getElementById("connected-to").innerText = ""
 		console.log("Server closed ")
 	})
 
@@ -88,12 +123,11 @@ peer.start( false, p=>{
 
 	p.onnewtrack = (newTrack, trackStreams) => {
 		document.getElementById("otherVideo").srcObject = trackStreams[0]
-		console.log(newTrack)
 	}
 
 
 	p.onpeerconnectsuccess = peerId =>{
-		console.log("Successfully connected to " + peerId)
+		document.getElementById("connected-to").innerText = "Successfully connected to " + peerId
 	}
 
 
