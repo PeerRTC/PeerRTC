@@ -42,6 +42,11 @@ peer.start( false, p=>{
 		console.log("New Payload: " + payload)
 	})
 
+
+	p.onnewprivatepayload = payload =>{
+		console.log("New Private Payload: " + payload)
+	}
+
 	p.onpeerpayloads = ((payloads)=>{
 		console.log("Peer Payloads: " + payloads)
 	})
@@ -92,6 +97,10 @@ peer.start( false, p=>{
 
 	p.onadminbroadcastdata = data =>{
 		console.log(data)
+	}
+
+	p.onadmingetallclientsdata = clientsData =>{
+		console.log(clientsData)
 	}
 
 	navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(stream =>{
