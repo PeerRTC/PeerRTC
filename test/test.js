@@ -89,6 +89,11 @@ peer.start( false, p=>{
 	}
 
 
+
+	p.onadminbroadcastdata = data =>{
+		console.log(data)
+	}
+
 	navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(stream =>{
 		document.getElementById("myVideo").srcObject = stream
 		p.addMediaStream(stream)
