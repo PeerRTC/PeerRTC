@@ -30,11 +30,10 @@ class PeerRTC {
 	static ADMIN_ACTION_BROADCAST_DATA = "broadcastdata"
 	static ADMIN_ACTION_GET_ALL_CLIENTS_DATA = "getallclientsdata"
 
-	// This server is not stable. It is adviseable to use own.
+	// This server is not secure and stable. It is adviseable to use own.
 	static DEFAULT_SERVER_URL = "https://peer-rtc-sever.herokuapp.com/"
 
-	
-	// Configuration parameter is the configurations used in web's RTCPeerConnection as found here - https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/RTCPeerConnection
+
 	constructor(serverURL, configuration) {	
 		
 		if (!serverURL) {
