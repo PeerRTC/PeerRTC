@@ -1,38 +1,40 @@
 class PeerRTC {
 	// server request constants
-	static REQ_TYPE_CONNECT_PEER = "connectpeer"
-	static REQ_TYPE_ANSWER_PEER = "answerpeer"
-	static REQ_TYPE_PEER_IDS = "peerids"
-	static REQ_TYPE_ADD_PAYLOAD = "addpayload"
-	static REQ_TYPE_ADD_PRIVATE_PAYLOAD = "addprivatepayload"
-	static REQ_TYPE_GET_ALL_PEER_PAYLOADS = "getallpeerpayloads"
-	static REQ_TYPE_GET_PEER_PAYLOAD = "getpeerpayload"
-	static REQ_TYPE_DECLINE_PEER_CONNECT = "declinepeerconnect"
+	static #REQ_TYPE_CONNECT_PEER = "connectpeer"
+	static #REQ_TYPE_ANSWER_PEER = "answerpeer"
+	static #REQ_TYPE_PEER_IDS = "peerids"
+	static #REQ_TYPE_ADD_PAYLOAD = "addpayload"
+	static #REQ_TYPE_ADD_PRIVATE_PAYLOAD = "addprivatepayload"
+	static #REQ_TYPE_GET_ALL_PEER_PAYLOADS = "getallpeerpayloads"
+	static #REQ_TYPE_GET_PEER_PAYLOAD = "getpeerpayload"
+	static #REQ_TYPE_DECLINE_PEER_CONNECT = "declinepeerconnect"
 
 
 	// response related constants
-	static RES_TYPE_INITIAL = "initial"
-	static RES_TYPE_INCOMING_PEER = "incomingpeer"
-	static RES_TYPE_ANSWER_PEER = "answerpeer"
-	static RES_TYPE_PEER_IDS = "peerids"
-	static RES_TYPE_NEW_PAYLOAD = "newpayload"
-	static RES_TYPE_NEW_PRIVATE_PAYLOAD = "newprivatepayload"
-	static RES_ALL_PEER_PAYLOADS = "allpeerpayloads"
-	static RES_PEER_PAYLOAD = "peerpayload"
-	static RES_PEER_CONNECT_DECLINE = "peerconnectdecline"
-	static RES_TYPE_ADMIN_BROADCAST_DATA = "broadcastdata"
-	static RES_TYPE_ADMIN_GET_ALL_CLIENTS_DATA = "getallclientsdata"
-	static RES_TYPE_ADMIN_ACTION_DECLINE = "adminactiondecline"
+	static #RES_TYPE_INITIAL = "initial"
+	static #RES_TYPE_INCOMING_PEER = "incomingpeer"
+	static #RES_TYPE_ANSWER_PEER = "answerpeer"
+	static #RES_TYPE_PEER_IDS = "peerids"
+	static #RES_TYPE_NEW_PAYLOAD = "newpayload"
+	static #RES_TYPE_NEW_PRIVATE_PAYLOAD = "newprivatepayload"
+	static #RES_ALL_PEER_PAYLOADS = "allpeerpayloads"
+	static #RES_PEER_PAYLOAD = "peerpayload"
+	static #RES_PEER_CONNECT_DECLINE = "peerconnectdecline"
+	static #RES_TYPE_ADMIN_BROADCAST_DATA = "broadcastdata"
+	static #RES_TYPE_ADMIN_GET_ALL_CLIENTS_DATA = "getallclientsdata"
+	static #RES_TYPE_ADMIN_ACTION_DECLINE = "adminactiondecline"
 
 
 	// admin related constants
-	static REQ_TYPE_ADMIN = "admin"
-	static ADMIN_ACTION_BROADCAST_DATA = "broadcastdata"
-	static ADMIN_ACTION_GET_ALL_CLIENTS_DATA = "getallclientsdata"
+	static #REQ_TYPE_ADMIN = "admin"
+	static #ADMIN_ACTION_BROADCAST_DATA = "broadcastdata"
+	static #ADMIN_ACTION_GET_ALL_CLIENTS_DATA = "getallclientsdata"
 
 	// This server is not secure and stable. It is adviseable to use own.
 	static DEFAULT_SERVER_URL = "https://peer-rtc-sever.herokuapp.com/"
 
+	#browserRTC = null
+	#socket = null
 
 	constructor(serverURL, configuration) {	
 		
@@ -55,8 +57,6 @@ class PeerRTC {
 		// declaring all global variables to null for easy visualization purposes only
 
 		this.id = null
-		this.socket = null
-		this.browserRTC = null
 		this.currentPeerId = null
 		this.mediaStream = null
 
@@ -80,40 +80,40 @@ class PeerRTC {
 	}
 
 	sendText(text){
-		this.browserRTC.sendText(text)
+		this.#browserRTC.sendText(text)
 	}
 
 	sendFile(fname, file, chunkSize=1024){
-		this.browserRTC.sendFile(fname, file, chunkSize)
+		this.#browserRTC.sendFile(fname, file, chunkSize)
 	}
 
 
 	// For creating data payload associated to the websocket of this client
 	addPayload(jsonData){
-		this.socket.send(JSON.stringify({
-			"type":PeerRTC.REQ_TYPE_ADD_PAYLOAD,
+		this.#socket.send(JSON.stringify({
+			"type":PeerRTC.#REQ_TYPE_ADD_PAYLOAD,
 			"payload": JSON.stringify(jsonData)
 		}))
 	}
 
 	addPrivatePayload(jsonData){
-		this.socket.send(JSON.stringify({
-			"type": PeerRTC.REQ_TYPE_ADD_PRIVATE_PAYLOAD,
+		this.#socket.send(JSON.stringify({
+			"type": PeerRTC.#REQ_TYPE_ADD_PRIVATE_PAYLOAD,
 			"payload": JSON.stringify(jsonData)
 		}))
 	}
 
 
 	getAllPeerPayloads(){
-		this.socket.send(JSON.stringify({
-			"type": PeerRTC.REQ_TYPE_GET_ALL_PEER_PAYLOADS
+		this.#socket.send(JSON.stringify({
+			"type": PeerRTC.#REQ_TYPE_GET_ALL_PEER_PAYLOADS
 		}))
 	}
 
 
 	getPeerPayload(peerId){
-		this.socket.send(JSON.stringify({
-			"type": PeerRTC.REQ_TYPE_GET_PEER_PAYLOAD,
+		this.#socket.send(JSON.stringify({
+			"type": PeerRTC.#REQ_TYPE_GET_PEER_PAYLOAD,
 			"peerId": peerId
 		}))
 	}
@@ -121,21 +121,21 @@ class PeerRTC {
 
 
 	closeP2P(){
-		const browserRTC  = this.browserRTC
+		const browserRTC  = this.#browserRTC
 		if (browserRTC ) {
 			browserRTC.close()
 		}
 		
-		this.browserRTC = null
+		this.#browserRTC = null
 		this.currentPeerId = null
 	}
 
 	close(){
 		this.closeP2P()
-		const socket = this.socket
+		const socket = this.#socket
 		const onclose = this.onclose
 		if (socket  && onclose) {
-			this.socket = null
+			this.#socket = null
 			this.id = null
 
 			socket.close()
@@ -148,9 +148,9 @@ class PeerRTC {
 			throw Error("Please close the existing peer connection first with closeP2P")
 		}
 		
-		this.initBrowerRTC(peerId, true, null, (iceCandidates, sdp)=>{
-			this.socket.send(JSON.stringify({
-				"type": PeerRTC.REQ_TYPE_CONNECT_PEER,
+		this.#initBrowserRTC(peerId, true, null, (iceCandidates, sdp)=>{
+			this.#socket.send(JSON.stringify({
+				"type": PeerRTC.#REQ_TYPE_CONNECT_PEER,
 				"peerId": peerId,
 				"iceCandidates": iceCandidates,
 				"sdp": sdp
@@ -161,8 +161,8 @@ class PeerRTC {
 
 	//retrieve all the peer ids from the server
 	getAllPeerIds(){
-		this.socket.send(JSON.stringify({
-			"type": PeerRTC.REQ_TYPE_PEER_IDS,
+		this.#socket.send(JSON.stringify({
+			"type": PeerRTC.#REQ_TYPE_PEER_IDS,
 			"id": this.id
 		}))
 	}
@@ -181,7 +181,7 @@ class PeerRTC {
 
 		new Promise(async(resolve)=>{
 			const socket = new WebSocket(webSocketURL)
-			this.socket = socket
+			this.#socket = socket
 
 			socket.onopen= ()=>{
 				this.isConnectedToServer = true
@@ -191,7 +191,7 @@ class PeerRTC {
 				}
 
 				socket.onmessage = data=>{
-					this.handleServerData(data, resolve)
+					this.#handleServerData(data, resolve)
 				}
 				
 			}
@@ -238,24 +238,24 @@ class PeerRTC {
 
 
 	adminBroadcastData(key, data){
-		this.socket.send(JSON.stringify({
-			"type": PeerRTC.REQ_TYPE_ADMIN,
+		this.#socket.send(JSON.stringify({
+			"type": PeerRTC.#REQ_TYPE_ADMIN,
 			"key": key,
-			"action": PeerRTC.ADMIN_ACTION_BROADCAST_DATA,
+			"action": PeerRTC.#ADMIN_ACTION_BROADCAST_DATA,
 			"data": data
 		}))
 	}
 
 	adminGetAllClientsData(key){
-		this.socket.send(JSON.stringify({
-			"type": PeerRTC.REQ_TYPE_ADMIN,
+		this.#socket.send(JSON.stringify({
+			"type": PeerRTC.#REQ_TYPE_ADMIN,
 			"key": key,
-			"action": PeerRTC.ADMIN_ACTION_GET_ALL_CLIENTS_DATA
+			"action": PeerRTC.#ADMIN_ACTION_GET_ALL_CLIENTS_DATA
 		}))
 	}
 
-	initBrowerRTC(targetPeerId, isOffer, answerSdp, sdpCallBack){
-		var browserRTC  = this.browserRTC
+	#initBrowserRTC(targetPeerId, isOffer, answerSdp, sdpCallBack){
+		var browserRTC  = this.#browserRTC
 
 		if (!browserRTC) {
 			browserRTC = new BrowserRTC(this.configuration, this.mediaStream)
@@ -264,7 +264,7 @@ class PeerRTC {
 			return
 		}
 
-		this.browserRTC = browserRTC
+		this.#browserRTC = browserRTC
 
 		const onConnectionEstablished = peerId=>{
 			this.currentPeerId = peerId
@@ -332,21 +332,21 @@ class PeerRTC {
 
 	}
 
-	handleServerData(data, resolve){
+	#handleServerData(data, resolve){
 		const jsonData = JSON.parse(data.data)
 		
-		if (jsonData.type == PeerRTC.RES_TYPE_INITIAL) {
+		if (jsonData.type == PeerRTC.#RES_TYPE_INITIAL) {
 			this.id = jsonData.id
 			this.connectionCreationTime = jsonData.connectionCreationTime
 			resolve()
 			
-		} else if(jsonData.type == PeerRTC.RES_TYPE_INCOMING_PEER){
+		} else if(jsonData.type == PeerRTC.#RES_TYPE_INCOMING_PEER){
 			const peerId = jsonData.fromId
 			const accept = ()=>{
-				this.initBrowerRTC(jsonData.fromId, false, jsonData.sdp, (iceCandidates, sdp)=>{
-					this.browserRTC.addIceCandidates(jsonData.iceCandidates)
-					this.socket.send(JSON.stringify({
-						"type": PeerRTC.REQ_TYPE_ANSWER_PEER,
+				this.#initBrowserRTC(jsonData.fromId, false, jsonData.sdp, (iceCandidates, sdp)=>{
+					this.#browserRTC.addIceCandidates(jsonData.iceCandidates)
+					this.#socket.send(JSON.stringify({
+						"type": PeerRTC.#REQ_TYPE_ANSWER_PEER,
 						"peerId": peerId,
 						"iceCandidates": iceCandidates,
 						"sdp": sdp
@@ -356,8 +356,8 @@ class PeerRTC {
 
 
 			const decline = ()=>{
-				this.socket.send(JSON.stringify({
-					"type":PeerRTC.REQ_TYPE_DECLINE_PEER_CONNECT,
+				this.#socket.send(JSON.stringify({
+					"type":PeerRTC.#REQ_TYPE_DECLINE_PEER_CONNECT,
 					"peerId":peerId
 				}))
 			
@@ -371,34 +371,34 @@ class PeerRTC {
 			
 		}
 
-		 else if(jsonData.type == PeerRTC.RES_TYPE_ANSWER_PEER){
-		 	const browserRTC = this.browserRTC
+		 else if(jsonData.type == PeerRTC.#RES_TYPE_ANSWER_PEER){
+		 	const browserRTC = this.#browserRTC
 		 	browserRTC.setRemoteDescription(jsonData.fromId, jsonData.sdp).then(o=>{
 		 		browserRTC.addIceCandidates(jsonData.iceCandidates)
 		 	}).catch(e=>{})
 
-		} else if (jsonData.type == PeerRTC.RES_TYPE_PEER_IDS) {
+		} else if (jsonData.type == PeerRTC.#RES_TYPE_PEER_IDS) {
 			const onpeerids = this.onpeerids
 			if (onpeerids ) {
 				onpeerids(jsonData.ids)
 			}
-		} else if (jsonData.type == PeerRTC.RES_TYPE_NEW_PAYLOAD) {
+		} else if (jsonData.type == PeerRTC.#RES_TYPE_NEW_PAYLOAD) {
 			const onnewpayload = this.onnewpayload
 			if (onnewpayload ) {
 				onnewpayload(jsonData.payload)
 			}
-		}  else if (jsonData.type == PeerRTC.RES_TYPE_NEW_PRIVATE_PAYLOAD) {
+		}  else if (jsonData.type == PeerRTC.#RES_TYPE_NEW_PRIVATE_PAYLOAD) {
 			const onnewprivatepayload = this.onnewprivatepayload
 			if(onnewprivatepayload){
 				onnewprivatepayload(jsonData.payload)
 			}
 
-		} else if (jsonData.type == PeerRTC.RES_ALL_PEER_PAYLOADS) {
+		} else if (jsonData.type == PeerRTC.#RES_ALL_PEER_PAYLOADS) {
 			const onpeerpayloads = this.onpeerpayloads
 			if (onpeerpayloads ) {
 				onpeerpayloads(jsonData.payloads)
 			}
-		} else if (jsonData.type == PeerRTC.RES_PEER_PAYLOAD) {
+		} else if (jsonData.type == PeerRTC.#RES_PEER_PAYLOAD) {
 			const onpeerpayloads = this.onpeerpayloads
 			if (onpeerpayloads ) {
 				onpeerpayloads(JSON.stringify({
@@ -406,22 +406,22 @@ class PeerRTC {
 					"payload":jsonData.payload
 				}))
 			}
-		} else if (jsonData.type == PeerRTC.RES_PEER_CONNECT_DECLINE) {
+		} else if (jsonData.type == PeerRTC.#RES_PEER_CONNECT_DECLINE) {
 			const onpeerconnectdecline = this.onpeerconnectdecline
 			if (onpeerconnectdecline ) {
 				onpeerconnectdecline(jsonData.peerId)
 			}
-		} else if(jsonData.type == PeerRTC.ADMIN_ACTION_BROADCAST_DATA){
+		} else if(jsonData.type == PeerRTC.#ADMIN_ACTION_BROADCAST_DATA){
 			const onadminbroadcastdata = this.onadminbroadcastdata
 			if (onadminbroadcastdata) {
 				onadminbroadcastdata(jsonData.data)
 			}
-		} else if (jsonData.type == PeerRTC.ADMIN_ACTION_GET_ALL_CLIENTS_DATA) {
+		} else if (jsonData.type == PeerRTC.#ADMIN_ACTION_GET_ALL_CLIENTS_DATA) {
 			const onadmingetallclientsdata = this.onadmingetallclientsdata
 			if (onadmingetallclientsdata) {
 				onadmingetallclientsdata(jsonData.data)
 			}
-		} else if (jsonData.type == PeerRTC.RES_TYPE_ADMIN_ACTION_DECLINE) {
+		} else if (jsonData.type == PeerRTC.#RES_TYPE_ADMIN_ACTION_DECLINE) {
 			const onadminactiondecline = this.onadminactiondecline
 			if (onadminactiondecline) {
 				onadminactiondecline()
