@@ -6,7 +6,7 @@ PeerRTC is packed with easy to call api for sending raw text, sending raw files,
 This module is still in beta phase and can be unstable. Source code contributions and bug reports are welcome.
 
 ## Sample Project
-* [Video call and file sharing site](https://github.com/ShimShim27/PeerRTC)
+* [Video call and file sharing site]([https://github.com/ShimShim27/PeerRTC](https://github.com/ShimShim27/PeerRTC/tree/master/test/Video%20call%20with%20file%20sharing))
 
 ## Setup
 
@@ -16,7 +16,7 @@ recommended to host your own.<br/>
 
 2. Add PeerRTC module in your html project's body.
 ```
-  <script  type="text/javascript" src=""></script>
+  <script  type="text/javascript" src="https://shimshim27.github.io/PeerRTC/peer.js"></script>
 ```
 
 
