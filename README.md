@@ -70,7 +70,7 @@ constructor.<br/>
 * Returns the configurations set for [RTCPeerConnection](https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/RTCPeerConnection) constructor. </br>
 
 ### blobs `attribute`
-* TODO </br>
+* Stores a BlobStorage instance. This attribute can be used for blob related tasks such as when dealing with receiving files.</br>
 
 ### isConnectedToServer `attribute`
 * Returns whether connected to server that runs on the provided server url. </br>
@@ -80,7 +80,7 @@ constructor.<br/>
 
 ### onpeerconnectsuccess `listener`
 ```
-peer.onpeerconnectsuccess = peerId =>{ }
+peer.onpeerconnectsuccess = peerId=>{ }
 ```
 * Called on successful connection to a peer via `connect` method.  <br/>
 
@@ -89,17 +89,17 @@ peer.onpeerconnectsuccess = peerId =>{ }
 
 ### onpeerids `listener`
 ```
-peer.onpeerids = ids => {}
+peer.onpeerids = ids=>{}
 ```
 * Called when `getAllPeerIds` method call is successful.  <br/>
 
 `ids` : `array`
 * Returns array of all peer ids connected to the server. Peer ids will only be returned if client ids are set 
-to be publicly availablein the [server](https://github.com/ShimShim27/PeerRTC-Server). <br/>
+to be publicly available in the [server](https://github.com/ShimShim27/PeerRTC-Server). <br/>
 
 ### ontextmessage `listener`
 ```
-  p.ontextmessage = text =>{ }
+  p.ontextmessage = text=>{ }
 ```
 * Called when a new string message is received by the client. This is triggered when the peer client on the other end call the `sendText` method. <br/>
 
@@ -108,7 +108,7 @@ to be publicly availablein the [server](https://github.com/ShimShim27/PeerRTC-Se
 
 ### onfilemessage `listener`
 ```
-p.onfilemessage = (fname, fileTotalSize, fileBytesArray, done) => {}
+p.onfilemessage = (fname, fileTotalSize, fileBytesArray, done)=>{}
 ```
 * Called when a new file is received by the client. <br/>
 
@@ -122,7 +122,116 @@ p.onfilemessage = (fname, fileTotalSize, fileBytesArray, done) => {}
 * The array of bytes of the currently received parts of a file. <br/>
 
 `done` : `boolean`
-* Whether the file is finished downloading or not.
+* Whether the file is finished downloading or not. <br/>
 
+### onsendfilemessage `listener`
+```
+  p.onsendfilemessage = (file, fileSizeSent)=>{}
+```
+* Triggered while currently uploading file to the connected peer.
 
+`file` : `File`
+* The current file sending. <br/>
 
+`fileSizeSent` : `number`
+* Current size of the part of the file being sent in bytes. <br/>
+
+### oncloseP2P  `listener`
+```
+  p.oncloseP2P = ()=>{}
+```
+* Triggered when connection to a peer is closed. <br/>
+
+### onclose `listener`
+```
+  p.onclose = ()=>{}
+```
+* Triggered when connection to the server is closed. <br/>
+
+### onnewpayload `listener`
+```
+p.onnewpayload = payload=>{}
+```
+* Triggered when a new payload for the current client is added in the server. To add new payload, call the `addPayload` method. <br/>
+
+`payload` : `json`
+* Returns the latest version of payload for this client stored in the server. <br/>
+
+### onnewprivatepayload `listener`
+```
+  p.onnewprivatepayload = payload =>{}
+```
+* Triggered when a new private payload for the current client is added in the server. To add new private payload, call the `addPrivatePayload` method. <br/>
+
+`payload` : `json`
+* Returns the latest version of the private payload for this client stored in the server. <br/>
+
+### onpeerpayloads `listener`
+```
+p.onpeerpayloads = payloads=> {}
+```
+* Triggered as a result of calling `getAllPeerPayloads` method. <br/>
+
+`payloads` : `array`
+* Array of payloads of all clients connected to the server. Client payloads will only be returned if client ids are set 
+to be publicly available in the [server](https://github.com/ShimShim27/PeerRTC-Server).  <br/>
+
+### onpeerconnectrequest `listener`
+```
+  p.onpeerconnectrequest = (peerId, accept, decline)=>{}
+```
+* Triggered when there is an incoming connection request from another peer. <br/>
+
+`peerId` : `string`
+* The id of the peer attempting to connect. <br/>
+
+`accept` : `function`
+* Calling this function wil establish connection to the requesting peer. <br/>
+
+`decline` : `function`
+* Calling this function wil decline the connection request of the requesting peer. <br/>
+
+### onpeerconnectdecline `listener`
+```
+  p.onpeerconnectdecline = peerId => {}
+```
+* Triggered when connection request to a peer has been denied. <br/>
+
+`peerId` : `string`
+* The peerId that declines the connection request.
+
+### onnewtrack `listener`
+```
+  p.onnewtrack = (newTrack, trackStreams) => {}
+```
+* Triggered when `addMediaStream` method was called by the connected peer. <br/>
+
+`newTrack` : `MediaStreamTrack`
+* The newly added track [object](https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamTrack). <br/>
+
+`trackStreams` : `MediaStreams`
+* The current stream [object](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream) the `newTrack` parameter belongs to. <br/>
+
+### onadminbroadcastdata `listener`
+```
+  p.onadminbroadcastdata = data =>{}
+```
+* Triggered by calling the `adminBroadcastData` method. <br/>
+
+`data` : `object`
+* The data broadcasted by the admin. <br/>
+
+### onadmingetallclientsdata `listener`
+```
+  p.onadmingetallclientsdata = clientsData =>{}
+```
+* Triggered by calling `adminGetAllClientsData` method.
+
+`clientsData` : `array`
+* Array of all clients data stored in the server. <br/>
+
+### onadminactiondecline `listener`
+```
+  p.onadminactiondecline = ()=> {}
+```
+* Triggered when admin related actions are declined by the server due to any reasons.
