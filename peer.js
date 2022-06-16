@@ -35,6 +35,7 @@ class PeerRTC {
 
 	#browserRTC = null
 	#socket = null
+	#blobs = null
 
 	constructor(serverURL, configuration) {	
 		
@@ -51,7 +52,7 @@ class PeerRTC {
 		
 		this.serverURL = serverURL
 		this.configuration = configuration
-		this.blobs = new BlobsStorage()
+		this.#blobs = new BlobsStorage()
 		this.isConnectedToServer = false
 
 		// declaring all global variables to null for easy visualization purposes only
@@ -203,26 +204,26 @@ class PeerRTC {
 
 
 	updateBlob(fname, arrayBuffer){
-		this.blobs.updateBlob(fname, arrayBuffer)
+		this.#blobs.updateBlob(fname, arrayBuffer)
 	}
 
 
 	getBlob(fname){
-		return this.blobs.getBlob(fname)
+		return this.#blobs.getBlob(fname)
 	}
 
 	deleteBlob(fname){
-		this.blobs.deleteBlob(fname)
+		this.#blobs.deleteBlob(fname)
 	}
 
 
 	getAllBlobFiles(){
-		return this.blobs.getAllFiles()
+		return this.#blobs.getAllFiles()
 	}
 
 
 	deleteAllBlobFiles(){
-		this.blobs.deleteAllFiles()
+		this.#blobs.deleteAllFiles()
 	}
 
 
@@ -728,3 +729,5 @@ class BlobsStorage{
 	}
 
 }
+
+
