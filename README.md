@@ -69,9 +69,6 @@ constructor.<br/>
 ### configuration `attribute`
 * Returns the configurations set for [RTCPeerConnection](https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/RTCPeerConnection) constructor. </br>
 
-### blobs `attribute`
-* Stores a [BlobStorage](#blobstorage-api-reference) instance. This attribute can be used for blob related tasks such as when dealing with receiving files.</br>
-
 ### isConnectedToServer `attribute`
 * Returns whether connected to server that runs on the provided server url. </br>
 
@@ -263,7 +260,7 @@ with other peers.  <br/>
 `peerId` : `string`
 * Peer id wanted to connect with. <br/>
 
-### sendText
+### sendText `method`
 ```
   peer.sendText(text)
 ```
@@ -272,4 +269,37 @@ with other peers.  <br/>
 `text` : `string`
 * String message to send. <br/>
 
-### BlobStorage Api Reference
+
+### sendFile `method`
+```
+  peer.sendFile(fname, file, chunkSize)
+```
+* For sending file. This method triggers the `onfilemessage` listener of the connected peer. <br/>
+
+`fname` : `string`
+* Desired name for the file, <br/>
+
+`file` : `File`
+* The file to be sent. <br/>
+
+`chunkSize` : `number`
+* Size in bytes on how big is the chunk of the file that will be sent to the other end. <br/>
+
+### addPayload `method`
+```
+  peer.addPayload(jsonData)
+```
+* For adding extra data or payload stored on the server associated to the current client. This data are also public and can be accessible to other peers
+is client ids are public in the [server](https://github.com/ShimShim27/PeerRTC-Server).
+
+`jsonData` : `json` <br/>
+* Desired data payload to be store in the server associated to the current client. <br/>
+
+### addPrivatePayload `method`
+```
+  peer.addPrivatePayload(jsonData)
+```
+* For adding private extra data or payload stored on the server associated to the current client. <br/>
+
+`jsonData` : `json` <br/>
+* Desired private data payload to be store in the server associated to the current client. <br/>
