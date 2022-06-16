@@ -282,7 +282,7 @@ with other peers.  <br/>
 `file` : `File`
 * The file to be sent. <br/>
 
-`chunkSize` : `number`
+`chunkSize` : `number`, default=1024
 * Size in bytes on how big is the chunk of the file that will be sent to the other end. <br/>
 
 ### addPayload `method`
@@ -303,3 +303,36 @@ is client ids are public in the [server](https://github.com/ShimShim27/PeerRTC-S
 
 `jsonData` : `json` <br/>
 * Desired private data payload to be store in the server associated to the current client. <br/>
+
+### getAllPeerPayloads `method`
+```
+peer.getAllPeerPayloads()
+```
+* For getting all peer payloads. Calling the method successfully will trigger `onpeerpayloads` listener. This method will not work properly if client public ids are not available to anyone in the [server](https://github.com/ShimShim27/PeerRTC-Server). <br/>
+
+### getPeerPayload `method`
+```
+  peer.getPeerPayload(peerId)
+```
+* Getting public payload of a specific peer.
+
+`peerId` : `string` </br>
+* Target peer id.
+
+### closeP2P `method`
+```
+  peer.closeP2P()
+```
+* For closing connection with another peer.  </br>
+
+### close `method`
+```
+  peer.close()
+```
+* For closing connection with the server.  </br>
+
+### getAllPeerIds `method`
+```
+  peer.getAllPeerIds()
+```
+* For fetching all the peer ids from the server.  Calling this method will trigger the `onpeerids` listener. This method will not work properly if client public ids are not available to anyone in the [server](https://github.com/ShimShim27/PeerRTC-Server). <br/>
