@@ -23,23 +23,8 @@ recommended to host your own.<br/>
 3. Initialize the PeerRTC class in your main or index javascript file. <br/>
  
   ```
-    // using default settings
-    
     peer = new PeerRTC()
   ```
-    
-  ```
-    // using custom settings
-    
-    serverUrl = "https://peer-rtc-sever.herokuapp.com/"
-
-    configurations = {
-      "iceServers": [{ "urls" : "stun:stun.l.google.com:19302" }]
-    }
-
-    peer = new PeerRTC(serverUrl, configurations)
-  ``` 
- 
   
 4. Connect to the backend server. <br/>
 ```
