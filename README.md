@@ -46,7 +46,7 @@ recommended to host your own.<br/>
 
 ### PeerRTC `constructor`
 ```
-  new PeerRTC(serverURL, configurations)
+  peer = new PeerRTC(serverURL, configurations)
 ```
 
 `serverURL` : `optional` `string` `default=https://peer-rtc-sever.herokuapp.com/` <br/>
@@ -68,9 +68,6 @@ constructor.<br/>
 
 ### configuration `attribute`
 * Returns the configurations set for [RTCPeerConnection](https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/RTCPeerConnection) constructor. </br>
-
-### blobs `attribute`
-* Stores a BlobStorage instance. This attribute can be used for blob related tasks such as when dealing with receiving files.</br>
 
 ### isConnectedToServer `attribute`
 * Returns whether connected to server that runs on the provided server url. </br>
@@ -99,7 +96,7 @@ to be publicly available in the [server](https://github.com/ShimShim27/PeerRTC-S
 
 ### ontextmessage `listener`
 ```
-  p.ontextmessage = text=>{ }
+  peer.ontextmessage = text=>{ }
 ```
 * Called when a new string message is received by the client. This is triggered when the peer client on the other end call the `sendText` method. <br/>
 
@@ -108,7 +105,7 @@ to be publicly available in the [server](https://github.com/ShimShim27/PeerRTC-S
 
 ### onfilemessage `listener`
 ```
-p.onfilemessage = (fname, fileTotalSize, fileBytesArray, done)=>{}
+peer.onfilemessage = (fname, fileTotalSize, fileBytesArray, done)=>{}
 ```
 * Called when a new file is received by the client. <br/>
 
@@ -126,7 +123,7 @@ p.onfilemessage = (fname, fileTotalSize, fileBytesArray, done)=>{}
 
 ### onsendfilemessage `listener`
 ```
-  p.onsendfilemessage = (file, fileSizeSent)=>{}
+  peer.onsendfilemessage = (file, fileSizeSent)=>{}
 ```
 * Triggered while currently uploading file to the connected peer.
 
@@ -138,19 +135,19 @@ p.onfilemessage = (fname, fileTotalSize, fileBytesArray, done)=>{}
 
 ### oncloseP2P  `listener`
 ```
-  p.oncloseP2P = ()=>{}
+  peer.oncloseP2P = ()=>{}
 ```
 * Triggered when connection to a peer is closed. <br/>
 
 ### onclose `listener`
 ```
-  p.onclose = ()=>{}
+  peer.onclose = ()=>{}
 ```
 * Triggered when connection to the server is closed. <br/>
 
 ### onnewpayload `listener`
 ```
-p.onnewpayload = payload=>{}
+peer.onnewpayload = payload=>{}
 ```
 * Triggered when a new payload for the current client is added in the server. To add new payload, call the `addPayload` method. <br/>
 
@@ -159,7 +156,7 @@ p.onnewpayload = payload=>{}
 
 ### onnewprivatepayload `listener`
 ```
-  p.onnewprivatepayload = payload =>{}
+  peer.onnewprivatepayload = payload =>{}
 ```
 * Triggered when a new private payload for the current client is added in the server. To add new private payload, call the `addPrivatePayload` method. <br/>
 
@@ -168,7 +165,7 @@ p.onnewpayload = payload=>{}
 
 ### onpeerpayloads `listener`
 ```
-p.onpeerpayloads = payloads=> {}
+peer.onpeerpayloads = payloads=> {}
 ```
 * Triggered as a result of calling `getAllPeerPayloads` method. <br/>
 
@@ -178,7 +175,7 @@ to be publicly available in the [server](https://github.com/ShimShim27/PeerRTC-S
 
 ### onpeerconnectrequest `listener`
 ```
-  p.onpeerconnectrequest = (peerId, accept, decline)=>{}
+  peer.onpeerconnectrequest = (peerId, accept, decline)=>{}
 ```
 * Triggered when there is an incoming connection request from another peer. <br/>
 
@@ -193,7 +190,7 @@ to be publicly available in the [server](https://github.com/ShimShim27/PeerRTC-S
 
 ### onpeerconnectdecline `listener`
 ```
-  p.onpeerconnectdecline = peerId => {}
+  peer.onpeerconnectdecline = peerId => {}
 ```
 * Triggered when connection request to a peer has been denied. <br/>
 
@@ -202,7 +199,7 @@ to be publicly available in the [server](https://github.com/ShimShim27/PeerRTC-S
 
 ### onnewtrack `listener`
 ```
-  p.onnewtrack = (newTrack, trackStreams) => {}
+  peer.onnewtrack = (newTrack, trackStreams) => {}
 ```
 * Triggered when `addMediaStream` method was called by the connected peer. <br/>
 
@@ -214,7 +211,7 @@ to be publicly available in the [server](https://github.com/ShimShim27/PeerRTC-S
 
 ### onadminbroadcastdata `listener`
 ```
-  p.onadminbroadcastdata = data =>{}
+  peer.onadminbroadcastdata = data =>{}
 ```
 * Triggered by calling the `adminBroadcastData` method. <br/>
 
@@ -223,7 +220,7 @@ to be publicly available in the [server](https://github.com/ShimShim27/PeerRTC-S
 
 ### onadmingetallclientsdata `listener`
 ```
-  p.onadmingetallclientsdata = clientsData =>{}
+  peer.onadmingetallclientsdata = clientsData =>{}
 ```
 * Triggered by calling `adminGetAllClientsData` method.
 
@@ -232,6 +229,77 @@ to be publicly available in the [server](https://github.com/ShimShim27/PeerRTC-S
 
 ### onadminactiondecline `listener`
 ```
-  p.onadminactiondecline = ()=> {}
+  peer.onadminactiondecline = ()=> {}
 ```
-* Triggered when admin related actions are declined by the server due to any reasons.
+* Triggered when admin related actions are declined by the server due to any reasons. <br/>
+
+
+### start `method`
+```
+  peer.start(isSecure, onConnect){
+```
+* Call this method to initiate connection to the backend server .<br/>
+
+`isSecure` : `boolean` 
+* Setting this to true will use secure connection from client to the server. Setting the parameter to true is only applicable in
+SSL supported `serverURLs`. <br/>
+
+`onConnect` : `function`
+```
+onConnect = (peer)=>{}
+``` 
+* A callback function after a successful connection to the server. The callback returns PeerRTC instance. <br/>
+
+### connect `method`
+```
+  peer.connect(peerId)
+```
+* Used for connecting with other peer ids. This method will throw an error if there are still existing connection
+with other peers.  <br/>
+
+`peerId` : `string`
+* Peer id wanted to connect with. <br/>
+
+### sendText `method`
+```
+  peer.sendText(text)
+```
+* For sending string data. This method triggers the `ontextmessage` listener of the connected peer. <br/>
+
+`text` : `string`
+* String message to send. <br/>
+
+
+### sendFile `method`
+```
+  peer.sendFile(fname, file, chunkSize)
+```
+* For sending file. This method triggers the `onfilemessage` listener of the connected peer. <br/>
+
+`fname` : `string`
+* Desired name for the file, <br/>
+
+`file` : `File`
+* The file to be sent. <br/>
+
+`chunkSize` : `number`
+* Size in bytes on how big is the chunk of the file that will be sent to the other end. <br/>
+
+### addPayload `method`
+```
+  peer.addPayload(jsonData)
+```
+* For adding extra data or payload stored on the server associated to the current client. This data are also public and can be accessible to other peers
+is client ids are public in the [server](https://github.com/ShimShim27/PeerRTC-Server).
+
+`jsonData` : `json` <br/>
+* Desired data payload to be store in the server associated to the current client. <br/>
+
+### addPrivatePayload `method`
+```
+  peer.addPrivatePayload(jsonData)
+```
+* For adding private extra data or payload stored on the server associated to the current client. <br/>
+
+`jsonData` : `json` <br/>
+* Desired private data payload to be store in the server associated to the current client. <br/>
