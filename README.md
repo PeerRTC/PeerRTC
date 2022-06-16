@@ -16,7 +16,7 @@ recommended to host your own.<br/>
 
 2. Add PeerRTC module in your html project's body.
 ```
-  <script  type="text/javascript" src="https://shimshim27.github.io/PeerRTC/peer.js"></script>
+  <script type="text/javascript" src="https://shimshim27.github.io/PeerRTC/peer.js"></script>
 ```
 
 
