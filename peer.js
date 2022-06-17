@@ -1,5 +1,8 @@
 /**
- * @author ShimShim27 <https://github.com/ShimShim27>
+ * A module for easy peer to peer connection.
+ * 
+ * @author ShimShim27
+ * 
  */
 
 class PeerRTC {
