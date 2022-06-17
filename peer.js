@@ -1,3 +1,7 @@
+/**
+ * @author ShimShim27 <https://github.com/ShimShim27>
+ */
+
 class PeerRTC {
 	// server request constants
 	static #REQ_TYPE_CONNECT_PEER = "connectpeer"
