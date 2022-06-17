@@ -3,7 +3,9 @@ PeerRTC is built on top of modern browser's WebRTC technology and also already h
 PeerRTC is packed with easy to call api for sending raw text, sending raw files, audio streaming, video streaming, connecting to peers via unique id and more.
 
 ## ❗ Note
-This module is still in beta phase and can be unstable. Source code contributions and bug reports are welcome.
+* Add credits and attribution to this [repository](https://github.com/ShimShim27/PeerRTC) when using the [module](https://github.com/ShimShim27/PeerRTC/blob/master/peer.js) since we are allowing free use.
+* This module is still in beta phase and can be unstable. 
+* Source code contributions and bug reports are welcome.
 
 ## 📖 Sample Project
 * [Video call and file sharing site](https://github.com/ShimShim27/PeerRTC/tree/master/test/Video%20call%20with%20file%20sharing)
@@ -57,23 +59,55 @@ than the default server since it is not stable. <br/>
 * Json data that will be passed to the [RTCPeerConnection](https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/RTCPeerConnection)
 constructor.<br/>
 
+<hr/>
+
 ### id `attribute`
+```
+  peer.id
+```
 *  Returns a unique id assigned by the server to this client. <br/>
 
+<hr/>
+
 ### currentPeerId `attribute`
+```
+  peer.currentPeerId
+```
 * Returns the peer id this client is connected with. To connect with other peer, call the `connect` method. <br/>
 
+<hr/>
+
 ### serverURL `attribute`
+```
+  peer.serverURL
+```
 * Returns the server url. <br/>
 
+<hr/>
+
 ### configuration `attribute`
+```
+  peer.configuration
+```
 * Returns the configurations set for [RTCPeerConnection](https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/RTCPeerConnection) constructor. </br>
 
+<hr/>
+
 ### isConnectedToServer `attribute`
+```
+  peer.isConnectedToServer
+```
 * Returns whether connected to server that runs on the provided server url. </br>
 
+<hr/>
+
 ### mediaStream `attribute`
+```
+  peer.mediaStream
+```
 * Returns the current media stream added by `addMediaStream` method. <br/>
+
+<hr/>
 
 ### onpeerconnectsuccess `listener`
 ```
@@ -83,6 +117,8 @@ peer.onpeerconnectsuccess = peerId=>{ }
 
 `peerId` : `string`
 * The peer id of the peer successfully connected to. <br/>
+
+<hr/>
 
 ### onpeerids `listener`
 ```
@@ -94,6 +130,8 @@ peer.onpeerids = ids=>{}
 * Returns array of all peer ids connected to the server. Peer ids will only be returned if client ids are set 
 to be publicly available in the [server](https://github.com/ShimShim27/PeerRTC-Server). <br/>
 
+<hr/>
+
 ### ontextmessage `listener`
 ```
   peer.ontextmessage = text=>{ }
@@ -102,6 +140,8 @@ to be publicly available in the [server](https://github.com/ShimShim27/PeerRTC-S
 
 `text` : `string`
 * Returns the string message.
+
+<hr/>
 
 ### onfilemessage `listener`
 ```
@@ -121,6 +161,8 @@ peer.onfilemessage = (fname, fileTotalSize, fileBytesArray, done)=>{}
 `done` : `boolean`
 * Whether the file is finished downloading or not. <br/>
 
+<hr/>
+
 ### onsendfilemessage `listener`
 ```
   peer.onsendfilemessage = (file, fileSizeSent)=>{}
@@ -133,17 +175,23 @@ peer.onfilemessage = (fname, fileTotalSize, fileBytesArray, done)=>{}
 `fileSizeSent` : `number`
 * Current size of the part of the file being sent in bytes. <br/>
 
+<hr/>
+
 ### oncloseP2P  `listener`
 ```
   peer.oncloseP2P = ()=>{}
 ```
 * Triggered when connection to a peer is closed. <br/>
 
+<hr/>
+
 ### onclose `listener`
 ```
   peer.onclose = ()=>{}
 ```
 * Triggered when connection to the server is closed. <br/>
+
+<hr/>
 
 ### onnewpayload `listener`
 ```
@@ -154,6 +202,8 @@ peer.onnewpayload = payload=>{}
 `payload` : `json`
 * Returns the latest version of payload for this client stored in the server. <br/>
 
+<hr/>
+
 ### onnewprivatepayload `listener`
 ```
   peer.onnewprivatepayload = payload =>{}
@@ -162,6 +212,8 @@ peer.onnewpayload = payload=>{}
 
 `payload` : `json`
 * Returns the latest version of the private payload for this client stored in the server. <br/>
+
+<hr/>
 
 ### onpeerpayloads `listener`
 ```
@@ -172,6 +224,8 @@ peer.onpeerpayloads = payloads=> {}
 `payloads` : `array`
 * Array of payloads of all clients connected to the server. Client payloads will only be returned if client ids are set 
 to be publicly available in the [config.json](https://github.com/ShimShim27/PeerRTC-Server/blob/main/server/config.json) in the server in the server.  <br/>
+
+<hr/>
 
 ### onpeerconnectrequest `listener`
 ```
@@ -188,6 +242,8 @@ to be publicly available in the [config.json](https://github.com/ShimShim27/Peer
 `decline` : `function`
 * Calling this function wil decline the connection request of the requesting peer. <br/>
 
+<hr/>
+
 ### onpeerconnectdecline `listener`
 ```
   peer.onpeerconnectdecline = peerId => {}
@@ -196,6 +252,8 @@ to be publicly available in the [config.json](https://github.com/ShimShim27/Peer
 
 `peerId` : `string`
 * The peerId that declines the connection request.
+
+<hr/>
 
 ### onnewtrack `listener`
 ```
@@ -209,6 +267,8 @@ to be publicly available in the [config.json](https://github.com/ShimShim27/Peer
 `trackStreams` : `MediaStreams`
 * The current stream [object](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream) the `newTrack` parameter belongs to. <br/>
 
+<hr/>
+
 ### onadminbroadcastdata `listener`
 ```
   peer.onadminbroadcastdata = data =>{}
@@ -217,6 +277,8 @@ to be publicly available in the [config.json](https://github.com/ShimShim27/Peer
 
 `data` : `object`
 * The data broadcasted by the admin. <br/>
+
+<hr/>
 
 ### onadmingetallclientsdata `listener`
 ```
@@ -227,12 +289,15 @@ to be publicly available in the [config.json](https://github.com/ShimShim27/Peer
 `clientsData` : `array`
 * Array of all clients data stored in the server. <br/>
 
+<hr/>
+
 ### onadminactiondecline `listener`
 ```
   peer.onadminactiondecline = ()=> {}
 ```
 * Triggered when admin related actions are declined by the server due to any reasons. <br/>
 
+<hr/>
 
 ### start `method`
 ```
@@ -250,6 +315,8 @@ onConnect = (peer)=>{}
 ``` 
 * A callback function after a successful connection to the server. The callback returns PeerRTC instance. <br/>
 
+<hr/>
+
 ### connect `method`
 ```
   peer.connect(peerId)
@@ -260,6 +327,8 @@ with other peers.  <br/>
 `peerId` : `string`
 * Peer id wanted to connect with. <br/>
 
+<hr/>
+
 ### sendText `method`
 ```
   peer.sendText(text)
@@ -269,6 +338,7 @@ with other peers.  <br/>
 `text` : `string`
 * String message to send. <br/>
 
+<hr/>
 
 ### sendFile `method`
 ```
@@ -285,6 +355,8 @@ with other peers.  <br/>
 `chunkSize` : `number`, default=1024
 * Size in bytes on how big is the chunk of the file that will be sent to the other end. <br/>
 
+<hr/>
+
 ### addPayload `method`
 ```
   peer.addPayload(jsonData)
@@ -295,6 +367,8 @@ when client ids are public available in [config.json](https://github.com/ShimShi
 `jsonData` : `json` <br/>
 * Desired data payload to be store in the server associated to the current client. <br/>
 
+<hr/>
+
 ### addPrivatePayload `method`
 ```
   peer.addPrivatePayload(jsonData)
@@ -304,11 +378,15 @@ when client ids are public available in [config.json](https://github.com/ShimShi
 `jsonData` : `json` <br/>
 * Desired private data payload to be store in the server associated to the current client. <br/>
 
+<hr/>
+
 ### getAllPeerPayloads `method`
 ```
 peer.getAllPeerPayloads()
 ```
 * For getting all peer payloads. Calling the method successfully will trigger `onpeerpayloads` listener. This method will not work properly if client public ids are not available to anyone in the [config.json](https://github.com/ShimShim27/PeerRTC-Server/blob/main/server/config.json) in the server in the server. <br/>
+
+<hr/>
 
 ### getPeerPayload `method`
 ```
@@ -319,11 +397,15 @@ peer.getAllPeerPayloads()
 `peerId` : `string` </br>
 * Target peer id.
 
+<hr/>
+
 ### closeP2P `method`
 ```
   peer.closeP2P()
 ```
 * For closing connection with another peer.  </br>
+
+<hr/>
 
 ### close `method`
 ```
@@ -331,11 +413,15 @@ peer.getAllPeerPayloads()
 ```
 * For closing connection with the server.  </br>
 
+<hr/>
+
 ### getAllPeerIds `method`
 ```
   peer.getAllPeerIds()
 ```
 * For fetching all the peer ids from the server.  Calling this method will trigger the `onpeerids` listener. This method will not work properly if client public ids are not available to anyone in the [config.json](https://github.com/ShimShim27/PeerRTC-Server/blob/main/server/config.json) in the server in the server. <br/>
+
+<hr/>
 
 ### addMediaStream  `method`
 ```
@@ -346,6 +432,8 @@ peer.getAllPeerPayloads()
 `stream` : `MediaStream` <br/>
 * This parameter is the [MediaStream](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream) parameter that will be sent to another connected peer. The `onnewtrack` listener for another peer will be triggered by calling
 this method. <br/>
+
+<hr/>
 
 ### updateBlob `method`
 ```
@@ -360,6 +448,8 @@ File name parameter. File name should be unique because it is used as the primar
 `arrayBuffer` : `ArrayBuffer` <br/>
 The chunked array buffer of a file parameter. Usually `arrayBuffer` can be received from `onfilemessage` listener. <br/>
 
+<hr/>
+
 ### getBlob `method`
 ```
   peer.getBlob(fname)
@@ -368,6 +458,8 @@ The chunked array buffer of a file parameter. Usually `arrayBuffer` can be recei
 
 `fname` : `string`
 * The unique file name of the blob being fetched. <br/>
+
+<hr/>
 
 ### deleteBlob `method`
 ```
@@ -378,17 +470,23 @@ The chunked array buffer of a file parameter. Usually `arrayBuffer` can be recei
 `fname` : `string` <br/>
 * The unique file name of the blob to be deleted. <br/>
 
+<hr/>
+
 ### getAllBlobFiles `method` `returns array`
 ```
   peer.getAllBlobFiles()
 ```
 * Returns an array of all stored [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) instance stored in the PeerRTC instance. <br/>
 
+<hr/>
+
 ### deleteAllBlobFiles `method`
 ```
   peer.deleteAllBlobFiles()
 ```
 * Delete all the [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) instance stored in the PeerRTC instance. <br/>
+
+<hr/>
 
 ### adminBroadcastData `method`
 ```
@@ -402,6 +500,8 @@ The chunked array buffer of a file parameter. Usually `arrayBuffer` can be recei
 `data` : `object` <br/>
 * The data to be sent on all connected clients. <br/>
 
+<hr/>
+
 ### adminGetAllClientsData `method`
 ```
   peer.adminGetAllClientsData(key)
@@ -411,3 +511,5 @@ will trigger `onadmingetallclientsdata` listener<br/>
 
 `key` : `string`  <br/>
 * A string that match tha sha56 hash in [config.json](https://github.com/ShimShim27/PeerRTC-Server/blob/main/server/config.json) in the server. Wrong key will trigger the `onadminactiondecline` method. <br/>
+
+<hr/>
