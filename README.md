@@ -14,7 +14,7 @@ PeerRTC is packed with easy to call api for sending raw text, sending raw files,
 ## ⚙️ Setup
 
 1. If you will be using the default PeerRTC backend server provided by us for testing purposes, you can skip this step. For own
-managed backend server, refer to [PeerRTC server's](https://github.com/ShimShim27) repository. Server owned by us is unstable and not managed so it is
+managed backend server, refer to [PeerRTC server's](https://github.com/ShimShim27/PeerRTC-Server) repository. Server owned by us is unstable and not managed so it is
 recommended to host your own.<br/>
 
 2. Add PeerRTC module in your html project's body.
