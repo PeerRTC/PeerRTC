@@ -1,14 +1,14 @@
-# PeerRTC
+# PeerRTC 🌐
 PeerRTC is built on top of modern browser's WebRTC technology and also already handled most of the complicated parts in working with RTC technology. 
 PeerRTC is packed with easy to call api for sending raw text, sending raw files, audio streaming, video streaming, connecting to peers via unique id and more.
 
-## Note
+## ❗ Note
 This module is still in beta phase and can be unstable. Source code contributions and bug reports are welcome.
 
-## Sample Project
+## 📖 Sample Project
 * [Video call and file sharing site](https://github.com/ShimShim27/PeerRTC/tree/master/test/Video%20call%20with%20file%20sharing)
 
-## Setup
+## ⚙️ Setup
 
 1. If you will be using the default PeerRTC backend server provided by us for testing purposes, you can skip this step. For own
 managed backend server, refer to [PeerRTC server's](https://github.com/ShimShim27) repository. Server owned by us is unstable and not managed so it is
@@ -42,7 +42,7 @@ recommended to host your own.<br/>
   peer.start(isSecure, onConnect)
 ```
 
-## PeerRTC Api Reference
+## 📚 Api Reference
 
 ### PeerRTC `constructor`
 ```
@@ -171,7 +171,7 @@ peer.onpeerpayloads = payloads=> {}
 
 `payloads` : `array`
 * Array of payloads of all clients connected to the server. Client payloads will only be returned if client ids are set 
-to be publicly available in the [server](https://github.com/ShimShim27/PeerRTC-Server).  <br/>
+to be publicly available in the [config.json](https://github.com/ShimShim27/PeerRTC-Server/blob/main/server/config.json) in the server in the server.  <br/>
 
 ### onpeerconnectrequest `listener`
 ```
@@ -236,7 +236,7 @@ to be publicly available in the [server](https://github.com/ShimShim27/PeerRTC-S
 
 ### start `method`
 ```
-  peer.start(isSecure, onConnect){
+  peer.start(isSecure, onConnect)
 ```
 * Call this method to initiate connection to the backend server .<br/>
 
@@ -290,7 +290,7 @@ with other peers.  <br/>
   peer.addPayload(jsonData)
 ```
 * For adding extra data or payload stored on the server associated to the current client. This data are also public and can be accessible to other peers
-is client ids are public in the [server](https://github.com/ShimShim27/PeerRTC-Server).
+when client ids are public available in [config.json](https://github.com/ShimShim27/PeerRTC-Server/blob/main/server/config.json) in the server in the server.
 
 `jsonData` : `json` <br/>
 * Desired data payload to be store in the server associated to the current client. <br/>
@@ -308,7 +308,7 @@ is client ids are public in the [server](https://github.com/ShimShim27/PeerRTC-S
 ```
 peer.getAllPeerPayloads()
 ```
-* For getting all peer payloads. Calling the method successfully will trigger `onpeerpayloads` listener. This method will not work properly if client public ids are not available to anyone in the [server](https://github.com/ShimShim27/PeerRTC-Server). <br/>
+* For getting all peer payloads. Calling the method successfully will trigger `onpeerpayloads` listener. This method will not work properly if client public ids are not available to anyone in the [config.json](https://github.com/ShimShim27/PeerRTC-Server/blob/main/server/config.json) in the server in the server. <br/>
 
 ### getPeerPayload `method`
 ```
@@ -335,4 +335,79 @@ peer.getAllPeerPayloads()
 ```
   peer.getAllPeerIds()
 ```
-* For fetching all the peer ids from the server.  Calling this method will trigger the `onpeerids` listener. This method will not work properly if client public ids are not available to anyone in the [server](https://github.com/ShimShim27/PeerRTC-Server). <br/>
+* For fetching all the peer ids from the server.  Calling this method will trigger the `onpeerids` listener. This method will not work properly if client public ids are not available to anyone in the [config.json](https://github.com/ShimShim27/PeerRTC-Server/blob/main/server/config.json) in the server in the server. <br/>
+
+### addMediaStream  `method`
+```
+  peer.addMediaStream (stream)
+```
+* This method is used for sending media stream to another connected peer. This method can be used for video and audio call functionality. <br/>
+
+`stream` : `MediaStream` <br/>
+* This parameter is the [MediaStream](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream) parameter that will be sent to another connected peer. The `onnewtrack` listener for another peer will be triggered by calling
+this method. <br/>
+
+### updateBlob `method`
+```
+  peer.updateBlob(fname, arrayBuffer)
+```
+* This method can be used in building [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) instance out of array buffer of a chunk of a file.
+This method can be helpful when building a chunked file received from `onfilemessage` listener. <br/>
+
+`fname` : `string` <br/>
+File name parameter. File name should be unique because it is used as the primary key to identify the stored blobs in a map. <br/>
+
+`arrayBuffer` : `ArrayBuffer` <br/>
+The chunked array buffer of a file parameter. Usually `arrayBuffer` can be received from `onfilemessage` listener. <br/>
+
+### getBlob `method`
+```
+  peer.getBlob(fname)
+```
+* Getting a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) instance stored in the PeerRTC instance. <br/>
+
+`fname` : `string`
+* The unique file name of the blob being fetched. <br/>
+
+### deleteBlob `method`
+```
+  peer.deleteBlob(fname)
+```
+* Deleting a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) instance stored in the PeerRTC instance. <br/>
+
+`fname` : `string` <br/>
+* The unique file name of the blob to be deleted. <br/>
+
+### getAllBlobFiles `method` `returns array`
+```
+  peer.getAllBlobFiles()
+```
+* Returns an array of all stored [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) instance stored in the PeerRTC instance. <br/>
+
+### deleteAllBlobFiles `method`
+```
+  peer.deleteAllBlobFiles()
+```
+* Delete all the [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) instance stored in the PeerRTC instance. <br/>
+
+### adminBroadcastData `method`
+```
+  peer.adminBroadcastData(key, data)
+```
+* A purposely private api to broadcast data to all clients. Calling this method will trigger `onadminbroadcastdata` of all clients. <br/>
+
+`key` : `string`  <br/>
+* A string that match tha sha56 hash in [config.json](https://github.com/ShimShim27/PeerRTC-Server/blob/main/server/config.json) in the server. Wrong key will trigger the `onadminactiondecline` method. <br/>
+
+`data` : `object` <br/>
+* The data to be sent on all connected clients. <br/>
+
+### adminGetAllClientsData `method`
+```
+  peer.adminGetAllClientsData(key)
+```
+* Method for getting all the clients data stored in the server including the private payloads. Successful call to this method 
+will trigger `onadmingetallclientsdata` listener<br/>
+
+`key` : `string`  <br/>
+* A string that match tha sha56 hash in [config.json](https://github.com/ShimShim27/PeerRTC-Server/blob/main/server/config.json) in the server. Wrong key will trigger the `onadminactiondecline` method. <br/>
