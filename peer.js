@@ -1,5 +1,6 @@
 /**
- * A module for easy peer to peer connection.
+ * A simple module for easy peer to peer connection. Github repository can be found
+ * at https://github.com/ShimShim27/PeerRTC
  * 
  * @author ShimShim27
  * 
@@ -63,7 +64,6 @@ class PeerRTC {
 		this.isConnectedToServer = false
 
 		// declaring all global variables to null for easy visualization purposes only
-
 		this.id = null
 		this.currentPeerId = null
 		this.mediaStream = null
