@@ -1,14 +1,14 @@
-# PeerRTC
+# PeerRTC 🌐
 PeerRTC is built on top of modern browser's WebRTC technology and also already handled most of the complicated parts in working with RTC technology. 
 PeerRTC is packed with easy to call api for sending raw text, sending raw files, audio streaming, video streaming, connecting to peers via unique id and more.
 
-## Note
+## ❗ Note
 This module is still in beta phase and can be unstable. Source code contributions and bug reports are welcome.
 
-## Sample Project
+## 📖 Sample Project
 * [Video call and file sharing site](https://github.com/ShimShim27/PeerRTC/tree/master/test/Video%20call%20with%20file%20sharing)
 
-## Setup
+## ⚙️ Setup
 
 1. If you will be using the default PeerRTC backend server provided by us for testing purposes, you can skip this step. For own
 managed backend server, refer to [PeerRTC server's](https://github.com/ShimShim27) repository. Server owned by us is unstable and not managed so it is
@@ -42,7 +42,7 @@ recommended to host your own.<br/>
   peer.start(isSecure, onConnect)
 ```
 
-## PeerRTC Api Reference
+## 📚 Api Reference
 
 ### PeerRTC `constructor`
 ```
