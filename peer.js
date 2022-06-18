@@ -446,11 +446,7 @@ class PeerRTC {
 
 // Wrapper class on top of the built in WebRTC api in modern browsers
 class BrowserRTC{
-	static TYPE_TEXT = "text"
-	static TYPE_FILE = "file"
-
 	
-
 	constructor(configuration, mediaStream){
 		const conn = new RTCPeerConnection(configuration)
 		conn.peerId = null
