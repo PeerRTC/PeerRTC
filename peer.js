@@ -152,18 +152,25 @@ class PeerRTC {
 	}
 
 	connect(peerId){
-		// if (this.currentPeerId) {
-		// 	throw Error("Please close the existing peer connection first with closeP2P")
-		// }
+		const connect = ()=>{
+			this.#initBrowserRTC(peerId, true, null, (iceCandidates, sdp)=>{
+				this.#socket.send(JSON.stringify({
+					"type": PeerRTC.#REQ_TYPE_CONNECT_PEER,
+					"peerId": peerId,
+					"iceCandidates": iceCandidates,
+					"sdp": sdp
+				}))
+			})
+		}
+
+		if (this.currentPeerId) {
+			this.#browserRTC.onclose = connect
+			this.closeP2P()
+		} else{
+			connect()
+		}
 		
-		this.#initBrowserRTC(peerId, true, null, (iceCandidates, sdp)=>{
-			this.#socket.send(JSON.stringify({
-				"type": PeerRTC.#REQ_TYPE_CONNECT_PEER,
-				"peerId": peerId,
-				"iceCandidates": iceCandidates,
-				"sdp": sdp
-			}))
-		})
+		
 		
 	}
 
