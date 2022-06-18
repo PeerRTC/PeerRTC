@@ -426,15 +426,31 @@ peer.getAllPeerPayloads()
 
 ### addMediaStream  `method`
 ```
-  peer.addMediaStream (stream)
+  peer.addMediaStream stream)
 ```
-* This method is used for sending media stream to another connected peer. This method can be used for video and audio call functionality. <br/>
+* This method is used for sending media stream to another connected peer. This method can be used for video and audio call functionality. Call this
+only before calling the `connect` method. <br/>
 
 `stream` : `MediaStream` <br/>
-* This parameter is the [MediaStream](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream) parameter that will be sent to another connected peer. The `onnewtrack` listener for another peer will be triggered by calling
+* This parameter is a [MediaStream](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream) parameter that will be sent to another connected peer. The `onnewtrack` listener for another peer will be triggered by calling
 this method. <br/>
 
 <hr/>
+
+### addTrack  `method`
+```
+  peer.addTrack(track, stream)
+```
+* Used for adding new track to the stream added via `addMediaStream`. Calling this method will trigger `onpeerconnectrequest` due to renegotiation process. <br/>
+
+`track` : `MediaStream` <br/>
+* A [MediaStreamTrack](https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamTrack) instance parameter and also the new track to be added to the `stream` parameter. <br/>
+
+`stream` : `MediaStream` <br/>
+* This parameter is a [MediaStream](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream) parameter that the `track` parameter belongs to. <br/>
+
+<hr/>
+
 
 ### updateBlob `method`
 ```
