@@ -441,7 +441,9 @@ this method. <br/>
   peer.updateBlob(fname, arrayBuffer)
 ```
 * This method can be used in building [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) instance out of array buffer of a chunk of a file.
-This method can be helpful when building a chunked file received from `onfilemessage` listener. <br/>
+This method can be helpful when building a chunked file received from `onfilemessage` listener. Memory errors may occur when using this method especially
+when dealing large files.
+<br/>
 
 `fname` : `string` <br/>
 File name parameter. File name should be unique because it is used as the primary key to identify the stored blobs in a map. <br/>
