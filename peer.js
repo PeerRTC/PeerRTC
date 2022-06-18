@@ -152,18 +152,25 @@ class PeerRTC {
 	}
 
 	connect(peerId){
+		const connect = ()=>{
+			this.#initBrowserRTC(peerId, true, null, (iceCandidates, sdp)=>{
+				this.#socket.send(JSON.stringify({
+					"type": PeerRTC.#REQ_TYPE_CONNECT_PEER,
+					"peerId": peerId,
+					"iceCandidates": iceCandidates,
+					"sdp": sdp
+				}))
+			})
+		}
+
 		if (this.currentPeerId) {
-			throw Error("Please close the existing peer connection first with closeP2P")
+			this.#browserRTC.onclose = connect
+			this.closeP2P()
+		} else{
+			connect()
 		}
 		
-		this.#initBrowserRTC(peerId, true, null, (iceCandidates, sdp)=>{
-			this.#socket.send(JSON.stringify({
-				"type": PeerRTC.#REQ_TYPE_CONNECT_PEER,
-				"peerId": peerId,
-				"iceCandidates": iceCandidates,
-				"sdp": sdp
-			}))
-		})
+		
 		
 	}
 
@@ -244,6 +251,9 @@ class PeerRTC {
 		this.mediaStream = stream
 	}
 
+	addTrack(track, stream){
+		this.#browserRTC.addTrack(track, stream)
+	}
 
 	adminBroadcastData(key, data){
 		this.#socket.send(JSON.stringify({
@@ -327,9 +337,23 @@ class PeerRTC {
 			}
 		}
 
+
+		const onnegotiationneeded = ()=>{
+			const peerId = this.currentPeerId
+			if(peerId){
+				this.#browserRTC.onclose = ()=>{
+					this.connect(peerId)
+					console.log("AA")
+				}
+
+				this.closeP2P()
+			}
+			
+		}
+
 		
 
-		browserRTC.setCallbacks(onConnectionEstablished, oncloseP2P, onicecandididate, ontextmessage, onfilemessage, onsendfilemessage, onnewtrack)
+		browserRTC.setCallbacks(onConnectionEstablished, oncloseP2P, onicecandididate, ontextmessage, onfilemessage, onsendfilemessage, onnegotiationneeded, onnewtrack)
 		browserRTC.addStreamToConnection()
 
 		if(isOffer){
@@ -462,7 +486,7 @@ class BrowserRTC{
 
 	}
 
-	setCallbacks(onConnectionEstablished, onclose, onicecandidate , ontextmessage, onfilemessage, onsendfilemessage, onnewtrack){
+	setCallbacks(onConnectionEstablished, onclose, onicecandidate , ontextmessage, onfilemessage, onsendfilemessage, onnegotiationneeded, onnewtrack){
 		const conn = this.conn
 		const iceCandidates = []
 		conn.onicecandidate  = event =>{
@@ -479,6 +503,9 @@ class BrowserRTC{
 			onnewtrack(event.track, event.streams)
 		}
 
+		conn.onnegotiationneeded = ()=> {
+			onnegotiationneeded()
+		}
 
 		this.onclose = ()=>{
 			onclose()
@@ -507,11 +534,15 @@ class BrowserRTC{
 	// Don't call this before calling setCallBacks because this won't trigger ontrack event
 	// Don't call this after creating offer and answer because his won't trigger ontrack event
 	addStreamToConnection(){
-		const stream = this.mediaStream
-		if (stream) {
-			for(const track of stream.getTracks()){
-				this.conn.addTrack(track, stream)
+		try{
+			const stream = this.mediaStream
+			if (stream) {
+				for(const track of stream.getTracks()){
+					this.conn.addTrack(track, stream)
+				}
 			}
+		}catch(e){
+
 		}
 	}
 
@@ -592,13 +623,19 @@ class BrowserRTC{
 		}
 	}
 
+	addTrack(track, stream){
+		this.conn.addTrack(track, stream)
+	}
+
 
 
 	initDataChannel(channel){
 		
 		channel.onmessage = this.onmessage
 		channel.onopen = this.onConnectionEstablished
-		channel.onclose= this.onclose
+		channel.onclose= ()=>{
+			this.onclose()
+		}
 		this.datachannel = channel
 	}
 
