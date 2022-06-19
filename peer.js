@@ -107,7 +107,7 @@ class PeerRTC {
 					}
 				}
 			}catch(e){
-				console.log(e)
+				
 			}
 		}, everyMillis)
 	}
@@ -375,7 +375,6 @@ class PeerRTC {
 			if(peerId){
 				this.#browserRTC.onclose = ()=>{
 					this.connect(peerId)
-					console.log("AA")
 				}
 
 				this.closeP2P()
