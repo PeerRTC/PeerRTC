@@ -318,6 +318,29 @@ onConnect = (peer)=>{}
 
 <hr/>
 
+### pingServer `method`
+```
+  peer.pingServer(everyMillis, onserverping)
+```
+* Method to ping server within interval continously. Calling this method will remove any existing intervals that are doing the pings to the server. Use this 
+method to prevent idling problems in server. <br/>
+
+`everyMillis` : `number`
+* Interval between each pings in milliseconds. <br/>
+
+`onserverping` : `function`
+* Function that is called upon successful pings. <br/>
+
+<hr/>
+
+### clearServerPinger `method`
+```
+  peer.clearServerPinger()
+```
+* Clears the existing interval that ping the server. <br/>
+
+<hr/>
+
 ### connect `method`
 ```
   peer.connect(peerId)
