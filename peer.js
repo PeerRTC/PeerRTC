@@ -16,6 +16,7 @@ class PeerRTC {
 	static #REQ_TYPE_GET_ALL_PEER_PAYLOADS = "getallpeerpayloads"
 	static #REQ_TYPE_GET_PEER_PAYLOAD = "getpeerpayload"
 	static #REQ_TYPE_DECLINE_PEER_CONNECT = "declinepeerconnect"
+	static #REQ_TYPE_PING = "ping"
 
 
 	// response related constants
@@ -44,6 +45,7 @@ class PeerRTC {
 	#browserRTC = null
 	#socket = null
 	#blobs = null
+	#pinger = null
 
 	constructor(serverURL, configuration) {	
 		
@@ -58,6 +60,9 @@ class PeerRTC {
 		} 
 
 		
+		
+
+
 		this.serverURL = serverURL
 		this.configuration = configuration
 		this.#blobs = new BlobsStorage()
@@ -86,6 +91,33 @@ class PeerRTC {
 		this.onadmingetallclientsdata = null
 		this.onadminactiondecline = null
 	}
+
+
+	pingServer(everyMillis, onserverping){
+		clearInterval(this.#pinger)
+		this.#pinger = setInterval(()=>{
+			const socket = this.#socket
+			try{
+				if (socket) {
+					socket.send(JSON.stringify({
+						"type": PeerRTC.#REQ_TYPE_PING
+					}))
+					if (onserverping) {
+						onserverping()
+					}
+				}
+			}catch(e){
+				console.log(e)
+			}
+		}, everyMillis)
+	}
+
+
+	clearServerPinger(){
+		clearInterval(this.#pinger)
+	}
+
+
 
 	sendText(text){
 		this.#browserRTC.sendText(text)
@@ -460,10 +492,6 @@ class PeerRTC {
 			}
 		}
 	}
-
-
-
-
 
 }
 
