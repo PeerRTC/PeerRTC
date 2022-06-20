@@ -87,6 +87,8 @@ class PeerRTC {
 		this.onpeerconnectdecline = null
 		this.onnewtrack = null
 
+		this.onservererror = null
+
 		this.onadminbroadcastdata = null
 		this.onadmingetallclientsdata = null
 		this.onadminactiondecline = null
@@ -98,7 +100,7 @@ class PeerRTC {
 		this.#pinger = setInterval(()=>{
 			const socket = this.#socket
 			try{
-				if (socket) {
+				if (socket && socket.readyState == 1) {
 					socket.send(JSON.stringify({
 						"type": PeerRTC.#REQ_TYPE_PING
 					}))
@@ -241,6 +243,13 @@ class PeerRTC {
 					this.#handleServerData(data, resolve)
 				}
 				
+			}
+
+			socket.onerror = event =>{
+				const onservererror = this.onservererror
+				if (onservererror) {
+					onservererror(event)
+				}
 			}
 
 		}).then(()=>onConnect(this))
