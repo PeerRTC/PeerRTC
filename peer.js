@@ -282,20 +282,17 @@ class PeerRTC {
 	}
 
 
-
-	addMediaStream(stream){
-		// Strictly add media stream before calling connect on peer id
-		if (this.currentPeerId) {
-			throw Error("Can't add media stream when already connected to peer")
+	setMediaStream(stream){
+		const browserRTC = this.#browserRTC
+		this.mediaStream = stream
+		if (browserRTC) {
+			browserRTC.setMediaStream(stream)
 		}
 
-		this.mediaStream = stream
 	}
 
-	addTrack(track, stream){
-		this.#browserRTC.addTrack(track, stream)
-	}
 
+	
 	adminBroadcastData(key, data){
 		this.#socket.send(JSON.stringify({
 			"type": PeerRTC.#REQ_TYPE_ADMIN,
@@ -567,8 +564,6 @@ class BrowserRTC{
 	}
 
 
-	// Don't call this before calling setCallBacks because this won't trigger ontrack event
-	// Don't call this after creating offer and answer because his won't trigger ontrack event
 	addStreamToConnection(){
 		try{
 			const stream = this.mediaStream
@@ -659,9 +654,49 @@ class BrowserRTC{
 		}
 	}
 
-	addTrack(track, stream){
-		this.conn.addTrack(track, stream)
+	
+	setMediaStream(stream){
+		this.mediaStream = stream
+
+		const replaceTrack = kind=>{
+			
+			const tracks = stream.getTracks()
+			var currentTrack
+			var count = 0
+			for(const track of tracks){
+				if (track.kind == kind) {
+					if (count > 1) {
+						throw Error(`Max of one track only for ${kind} in a MediaStream.`)
+					}
+
+					currentTrack = track
+					count++
+				}
+				
+			}
+
+			for(const sender of this.conn.getSenders()){
+				if (sender.track.kind == kind) {
+					if (currentTrack) {
+						sender.replaceTrack(currentTrack)
+					} else{
+						sender.track.enabled = false
+					}
+					
+					break
+				}
+			}
+			
+
+
+		}
+
+
+		replaceTrack("audio")
+		replaceTrack("video")
+		
 	}
+
 
 
 
