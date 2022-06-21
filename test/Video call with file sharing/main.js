@@ -157,7 +157,7 @@ peer.start( false, p=>{
 
 	navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(stream =>{
 		document.getElementById("myVideo").srcObject = stream
-		p.addMediaStream(stream)
+		p.setMediaStream(stream)
 	})
 	
 })
