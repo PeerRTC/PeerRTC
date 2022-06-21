@@ -376,21 +376,9 @@ class PeerRTC {
 		}
 
 
-		const onnegotiationneeded = ()=>{
-			const peerId = this.currentPeerId
-			if(peerId){
-				this.#browserRTC.onclose = ()=>{
-					this.connect(peerId)
-				}
-
-				this.closeP2P()
-			}
-			
-		}
-
 		
 
-		browserRTC.setCallbacks(onConnectionEstablished, oncloseP2P, onicecandididate, ontextmessage, onfilemessage, onsendfilemessage, onnegotiationneeded, onnewtrack)
+		browserRTC.setCallbacks(onConnectionEstablished, oncloseP2P, onicecandididate, ontextmessage, onfilemessage, onsendfilemessage, onnewtrack)
 		browserRTC.addStreamToConnection()
 
 		if(isOffer){
@@ -519,7 +507,7 @@ class BrowserRTC{
 
 	}
 
-	setCallbacks(onConnectionEstablished, onclose, onicecandidate , ontextmessage, onfilemessage, onsendfilemessage, onnegotiationneeded, onnewtrack){
+	setCallbacks(onConnectionEstablished, onclose, onicecandidate , ontextmessage, onfilemessage, onsendfilemessage, onnewtrack){
 		const conn = this.conn
 		const iceCandidates = []
 		conn.onicecandidate  = event =>{
@@ -534,10 +522,6 @@ class BrowserRTC{
 
 		conn.ontrack = event => {
 			onnewtrack(event.track, event.streams)
-		}
-
-		conn.onnegotiationneeded = ()=> {
-			onnegotiationneeded()
 		}
 
 		this.onclose = ()=>{
