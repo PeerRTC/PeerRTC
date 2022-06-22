@@ -300,6 +300,17 @@ to be publicly available in the [config.json](https://github.com/ShimShim27/Peer
 
 <hr/>
 
+
+### onservererror `listener`
+```
+  peer.onservererror = event=>{}
+```
+* Triggered when server related error occurs. <br/>
+
+`event` : `Event`
+* A parameter that is an [Event](https://developer.mozilla.org/en-US/docs/Web/API/Event) instance that contains the errors.
+<hr/>
+
 ### start `method`
 ```
   peer.start(isSecure, onConnect)
