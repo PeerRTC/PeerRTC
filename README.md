@@ -456,7 +456,7 @@ also throws an error if the provided [MediaStream](https://developer.mozilla.org
 Calling this method after successful call  to `connect` method will only replace the earlier video and audio track. This means that providing a stream with video track in which it don't had any before calling the `connect` method will not work. The method can be use for switching rear and front camera functionality. <br/>
 
 `stream` : `MediaStream` <br/>
-* This parameter is a [MediaStream](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream) parameter that will be sent to another connected peer. The `onnewtrack` listener for another peer will be triggered by calling
+* This parameter is a [MediaStream](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream) parameter that will be sent to another connected peer. The `onnewtrack` listener on another peer will be triggered by calling
 this method. <br/>
 
 <hr/>
