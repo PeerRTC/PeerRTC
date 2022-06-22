@@ -451,8 +451,9 @@ peer.getAllPeerPayloads()
 ```
   peer.setMediaStream(stream)
 ```
-* This method is used for sending [MediaStream](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream)m to another connected peer. This method can be used for video and audio call functionality. This method
-also throws an error if the provided [MediaStream](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream) contains more than one audio and video track. <br/>
+* This method is used for sending [MediaStream](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream) to another connected peer. This method can be used for video and audio call functionality. This method
+also throws an error if the provided [MediaStream](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream) contains more than one audio and video track. 
+Calling this method after successful call  to `connect` method will only replace the earlier video and audio track. This means that providing a stream with video track in which it don't had any before calling the `connect` method will not work. The method can be use for switching rear and front camera functionality. <br/>
 
 `stream` : `MediaStream` <br/>
 * This parameter is a [MediaStream](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream) parameter that will be sent to another connected peer. The `onnewtrack` listener for another peer will be triggered by calling
