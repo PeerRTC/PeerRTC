@@ -11,7 +11,7 @@ const configurations = {}
 
 peer = new PeerRTC(serverURL, configurations)
 peer.pingServer(10000)
-peer.start( false, p=>{
+peer.start( true, p=>{
 	document.getElementById("peer-id").innerHTML = "My Id: " + p.id
 
 	p.ontextmessage = (m)=>{
