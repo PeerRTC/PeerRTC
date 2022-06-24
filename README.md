@@ -4,22 +4,22 @@ PeerRTC is built on top of modern browser's WebRTC technology and also already h
 PeerRTC is packed with easy to call api for sending raw text, sending raw files, audio streaming, video streaming, connecting to peers via unique id and more.
 
 ## ❗ Note
-* Add credits and attribution to this [repository](https://github.com/ShimShim27/PeerRTC) when using the [module](https://github.com/ShimShim27/PeerRTC/blob/master/peer.js).
+* Add credits and attribution to this [repository](https://github.com/PeerRTC/PeerRTC) when using the [module](https://github.com/PeerRTC/PeerRTC/blob/master/peer.js).
 * This module is still in beta phase and can be unstable. 
 * Source code contributions and bug reports are encouraged.
 
 ## 📖 Sample Project
-* [Video call and file sharing site](https://shimshim27.github.io/PeerRTC/test/Video%20call%20with%20file%20sharing/index.html)
+* [Video call and file sharing site](https://PeerRTC.github.io/PeerRTC/test/Video%20call%20with%20file%20sharing/index.html)
 
 ## ⚙️ Setup
 
 1. If you will be using the default PeerRTC backend server provided by us for testing purposes, you can skip this step. For own
-managed backend server, refer to [PeerRTC server's](https://github.com/ShimShim27/PeerRTC-Server) repository. Server owned by us is unstable and not managed so it is
+managed backend server, refer to [PeerRTC server's](https://github.com/PeerRTC/PeerRTC-Server) repository. Server owned by us is unstable and not managed so it is
 recommended to host your own.<br/>
 
 2. Add PeerRTC module in your html project's body.
 ```
-  <script type="text/javascript" src="https://shimshim27.github.io/PeerRTC/peer.js"></script>
+  <script type="text/javascript" src="https://PeerRTC.github.io/PeerRTC/peer.js"></script>
 ```
 
 
@@ -129,7 +129,7 @@ peer.onpeerids = ids=>{}
 
 `ids` : `array`
 * Returns array of all peer ids connected to the server. Peer ids will only be returned if client ids are set 
-to be publicly available in the [server](https://github.com/ShimShim27/PeerRTC-Server). <br/>
+to be publicly available in the [server](https://github.com/PeerRTC/PeerRTC-Server). <br/>
 
 <hr/>
 
@@ -224,7 +224,7 @@ peer.onpeerpayloads = payloads=> {}
 
 `payloads` : `array`
 * Array of payloads of all clients connected to the server. Client payloads will only be returned if client ids are set 
-to be publicly available in the [config.json](https://github.com/ShimShim27/PeerRTC-Server/blob/main/server/config.json) in the server in the server.  <br/>
+to be publicly available in the [config.json](https://github.com/PeerRTC/PeerRTC-Server/blob/main/server/config.json) in the server in the server.  <br/>
 
 <hr/>
 
@@ -397,7 +397,7 @@ with other peers.  <br/>
   peer.addPayload(jsonData)
 ```
 * For adding extra data or payload stored on the server associated to the current client. This data are also public and can be accessible to other peers
-when client ids are public available in [config.json](https://github.com/ShimShim27/PeerRTC-Server/blob/main/server/config.json) in the server in the server.
+when client ids are public available in [config.json](https://github.com/PeerRTC/PeerRTC-Server/blob/main/server/config.json) in the server in the server.
 
 `jsonData` : `json` <br/>
 * Desired data payload to be store in the server associated to the current client. <br/>
@@ -419,7 +419,7 @@ when client ids are public available in [config.json](https://github.com/ShimShi
 ```
 peer.getAllPeerPayloads()
 ```
-* For getting all peer payloads. Calling the method successfully will trigger `onpeerpayloads` listener. This method will not work properly if client public ids are not available to anyone in the [config.json](https://github.com/ShimShim27/PeerRTC-Server/blob/main/server/config.json) in the server in the server. <br/>
+* For getting all peer payloads. Calling the method successfully will trigger `onpeerpayloads` listener. This method will not work properly if client public ids are not available to anyone in the [config.json](https://github.com/PeerRTC/PeerRTC-Server/blob/main/server/config.json) in the server in the server. <br/>
 
 <hr/>
 
@@ -454,7 +454,7 @@ peer.getAllPeerPayloads()
 ```
   peer.getAllPeerIds()
 ```
-* For fetching all the peer ids from the server.  Calling this method will trigger the `onpeerids` listener. This method will not work properly if client public ids are not available to anyone in the [config.json](https://github.com/ShimShim27/PeerRTC-Server/blob/main/server/config.json) in the server in the server. <br/>
+* For fetching all the peer ids from the server.  Calling this method will trigger the `onpeerids` listener. This method will not work properly if client public ids are not available to anyone in the [config.json](https://github.com/PeerRTC/PeerRTC-Server/blob/main/server/config.json) in the server in the server. <br/>
 
 <hr/>
 
@@ -535,7 +535,7 @@ The chunked array buffer of a file parameter. Usually `arrayBuffer` can be recei
 * A purposely private api to broadcast data to all clients. Calling this method will trigger `onadminbroadcastdata` of all clients. <br/>
 
 `key` : `string`  <br/>
-* A string that match tha sha56 hash in [config.json](https://github.com/ShimShim27/PeerRTC-Server/blob/main/server/config.json) in the server. Wrong key will trigger the `onadminactiondecline` method. <br/>
+* A string that match tha sha56 hash in [config.json](https://github.com/PeerRTC/PeerRTC-Server/blob/main/server/config.json) in the server. Wrong key will trigger the `onadminactiondecline` method. <br/>
 
 `data` : `object` <br/>
 * The data to be sent on all connected clients. <br/>
@@ -550,6 +550,6 @@ The chunked array buffer of a file parameter. Usually `arrayBuffer` can be recei
 will trigger `onadmingetallclientsdata` listener<br/>
 
 `key` : `string`  <br/>
-* A string that match tha sha56 hash in [config.json](https://github.com/ShimShim27/PeerRTC-Server/blob/main/server/config.json) in the server. Wrong key will trigger the `onadminactiondecline` method. <br/>
+* A string that match tha sha56 hash in [config.json](https://github.com/PeerRTC/PeerRTC-Server/blob/main/server/config.json) in the server. Wrong key will trigger the `onadminactiondecline` method. <br/>
 
 <hr/>
