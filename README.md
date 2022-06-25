@@ -1,5 +1,5 @@
 # PeerRTC 🌐
-PeerRTC is a simple module for easy peer to peer connection. 
+PeerRTC is a simple javascript web module for easy peer to peer connection. 
 PeerRTC is built on top of modern browser's WebRTC technology and also already handled most of the complicated parts in working with RTC technology. 
 PeerRTC is packed with easy to call api for sending raw text, sending raw files, audio streaming, video streaming, connecting to peers via unique id and more.
 
