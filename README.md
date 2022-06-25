@@ -387,7 +387,7 @@ with other peers.  <br/>
 `file` : `File`
 * The file to be sent. <br/>
 
-`chunkSize` : `number`, default=1024
+`chunkSize` : `number`, `default=1024`
 * Size in bytes on how big is the chunk of the file that will be sent to the other end. <br/>
 
 <hr/>
