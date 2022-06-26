@@ -1,11 +1,3 @@
-/**
- * A simple module for easy peer to peer connection. Github repository can be found
- * at https://github.com/ShimShim27/PeerRTC
- * 
- * @author ShimShim27
- * 
- */
-
 class PeerRTC {
 	// server request constants
 	static #REQ_TYPE_CONNECT_PEER = "connectpeer"
@@ -39,8 +31,10 @@ class PeerRTC {
 	static #ADMIN_ACTION_BROADCAST_DATA = "broadcastdata"
 	static #ADMIN_ACTION_GET_ALL_CLIENTS_DATA = "getallclientsdata"
 
-	// This server is not secure and stable. It is adviseable to use own.
+	// This server is not stable. It is adviseable to use own.
 	static DEFAULT_SERVER_URL = "https://peer-rtc-sever.herokuapp.com/"
+
+	static DEFAULT_ICE_SERVER_SOURCE_URL = "https://peer-rtc-twilio-iceservers.herokuapp.com/getIceServers"
 
 	#browserRTC = null
 	#socket = null
@@ -52,15 +46,6 @@ class PeerRTC {
 		if (!serverURL) {
 			serverURL = PeerRTC.DEFAULT_SERVER_URL
 		}
-		
-		if (!configuration) {
-			configuration = {
-				"iceServers": [{ "urls" : "stun:stun.l.google.com:19302" }]
-			}
-		} 
-
-		
-		
 
 
 		this.serverURL = serverURL
@@ -226,9 +211,16 @@ class PeerRTC {
 		}
 		
 		// Convert the provided server url to a web socket url
-		const webSocketURL =scheme + this.serverURL.replaceAll(/((http(s{0,1}))|(ws(s{0,1}))):\/\//g, "")
+		const webSocketURL = scheme + this.serverURL.replaceAll(/((http(s{0,1}))|(ws(s{0,1}))):\/\//g, "")
 
 		new Promise(async(resolve)=>{
+			if (!this.configuration) {
+				this.configuration = {
+					iceServers: await this.#fetchIceServersFromDefault()
+				}
+				console.log(this.configuration)
+			}
+
 			const socket = new WebSocket(webSocketURL)
 			this.#socket = socket
 
@@ -310,6 +302,16 @@ class PeerRTC {
 		}))
 	}
 
+	async #fetchIceServersFromDefault(){
+		var iceServers = []
+		try{
+			const response = await fetch(PeerRTC.DEFAULT_ICE_SERVER_SOURCE_URL)
+			iceServers = await response.json()
+		}catch(e){
+
+		}
+		return iceServers
+	}
 	#initBrowserRTC(targetPeerId, isOffer, answerSdp, sdpCallBack){
 		var browserRTC  = this.#browserRTC
 

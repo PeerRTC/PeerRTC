@@ -6,7 +6,7 @@ const receivingFiles = new Map()
 const serverURL = null	
 
 //used in web's RTCPeerConnection as found here - https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/RTCPeerConnection
-const configurations = {}	 
+const configurations = null
 
 
 peer = new PeerRTC(serverURL, configurations)
