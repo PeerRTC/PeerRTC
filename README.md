@@ -55,12 +55,13 @@ recommended to host your own.<br/>
 ```
 
 `serverURL` : `optional` `string` <br/>
-* The url in which the backend server is hosted. Not providing any url will use the default server url in `PeerRTC.DEFAULT_SERVER_URL` .
+* The url in which the backend server is hosted. Not providing any url will use the default server url  `PeerRTC.DEFAULT_SERVER_URL` .
 It is recommended to  use your own rather than the default server since it is not stable. <br/>
 
 `configurations` : `optional` `json` <br/>
 * Json data that will be passed to the [RTCPeerConnection](https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/RTCPeerConnection)
-constructor. Not providing any will result in using the iceServers provided by the default url in `PeerRTC.DEFAULT_ICE_SERVER_SOURCE_URL` . <br/>
+constructor. Not providing any will result in using the configurations with iceServers included provided by the default url `PeerRTC.DEFAULT_ICE_SERVER_SOURCE_URL` .
+The default url fetch the ice servers from our own hosted [server](https://github.com/PeerRTC/PeerRTC-Twilio-IceServers). <br/>
 
 <hr/>
 
