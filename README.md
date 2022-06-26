@@ -4,7 +4,7 @@ PeerRTC is built on top of modern browser's WebRTC technology and also already h
 PeerRTC is packed with easy to call api for sending raw text, sending raw files, audio streaming, video streaming, connecting to peers via unique id and more.
 
 ## ❗ Note
-* Add credits and attribution to this [repository](https://github.com/PeerRTC/PeerRTC) when using the [module](https://github.com/PeerRTC/PeerRTC/blob/master/peer.js).
+* Add credits and attribution to this [website](https://peerrtc.github.io/) when using the [module](https://github.com/PeerRTC/PeerRTC/blob/master/peer.js).
 * This module is still in beta phase and can be unstable. 
 * Source code contributions and bug reports are encouraged.
 
