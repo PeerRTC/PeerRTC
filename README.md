@@ -53,12 +53,12 @@ recommended to host your own.<br/>
 ```
 
 `serverURL` : `optional` `string` `default=https://peer-rtc-sever.herokuapp.com/` <br/>
-* The url in which the backend server is hosted. It is recommended to  use your own rather
-than the default server since it is not stable. <br/>
+* The url in which the backend server is hosted. Not providing any url will use the default server url.
+It is recommended to  use your own rather than the default server since it is not stable. <br/>
 
-`configurations` : `optional` `json` `default={ "iceServers": [{ "urls" : "stun:stun.l.google.com:19302" }] }` <br/>
+`configurations` : `optional` `json` <br/>
 * Json data that will be passed to the [RTCPeerConnection](https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/RTCPeerConnection)
-constructor.<br/>
+constructor. <br/>
 
 <hr/>
 
