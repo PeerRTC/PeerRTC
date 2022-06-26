@@ -52,7 +52,7 @@ recommended to host your own.<br/>
   peer = new PeerRTC(serverURL, configurations)
 ```
 
-`serverURL` : `optional` `string` `default=https://peer-rtc-sever.herokuapp.com/` <br/>
+`serverURL` : `optional` `string` <br/>
 * The url in which the backend server is hosted. Not providing any url will use the default server url in `PeerRTC.DEFAULT_SERVER_URL` .
 It is recommended to  use your own rather than the default server since it is not stable. <br/>
 
