@@ -9,7 +9,9 @@ PeerRTC is packed with easy to call api for sending raw text, sending raw files,
 * Source code contributions and bug reports are encouraged.
 
 ## 📖 Sample Project
-* [Video call and file sharing site](https://PeerRTC.github.io/PeerRTC/test/Video%20call%20with%20file%20sharing/index.html)
+**Video Call and File Sharing Site**
+* [Website](https://PeerRTC.github.io/PeerRTC/test/Video%20call%20with%20file%20sharing/index.html) 
+* [Source Code](https://github.com/PeerRTC/PeerRTC/tree/master/test/Video%20call%20with%20file%20sharing)
 
 ## ⚙️ Setup
 
