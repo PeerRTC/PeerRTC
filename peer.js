@@ -218,7 +218,6 @@ class PeerRTC {
 				this.configuration = {
 					iceServers: await this.#fetchIceServersFromDefault()
 				}
-				console.log(this.configuration)
 			}
 
 			const socket = new WebSocket(webSocketURL)
