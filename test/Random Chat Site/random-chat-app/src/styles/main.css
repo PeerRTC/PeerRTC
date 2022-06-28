@@ -1,0 +1,61 @@
+body, html{
+ 	 margin:0;
+ }
+
+#main-container{
+	position: absolute;
+	background: red;
+	display: flex;
+	flex-direction: row;
+	height: 100%;
+	width: 100%;
+}
+
+#video-displays-container{
+	display: flex;
+	flex-direction: column;
+	background: darkred;
+	width: 40%;
+}
+
+
+#message-displays-container{
+	background: beige;
+	display: flex;
+	flex-direction: column;
+	width: 60%;
+}
+
+.video-display{
+	object-fit: cover;
+	width: 100%;
+	height: 50%;
+}
+
+#send-message-container{
+	background: green;
+	margin-top: 20px;
+	height: 10%;
+	display: flex;
+	flex-direction: row;
+}
+
+
+#message-box-display{
+	margin: 0;
+	height: 90%;
+}
+
+
+#attach-file-bttn{
+}
+
+#send-message-bttn{
+	flex-grow:  3;
+}
+
+#message-box-input{
+	padding: 0;
+	margin: 0;
+	width: 80%;
+}
