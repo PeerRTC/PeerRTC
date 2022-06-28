@@ -1,12 +1,13 @@
 import videoPoster from "../images/video-placeholder.jpg"
 import attachFileIcon from "../images/attach-file-icon.svg"
 
+
 function Main(){
 	return (
 		<div id="main-container">
 			<div id="video-displays-container">
-				<video id="my-video" class="video-display" poster={videoPoster} autoplay muted></video>
-				<video id="incoming-video" class="video-display" poster={videoPoster} autoplay></video>
+				<video id="my-video" className="video-display" poster={videoPoster} autoPlay muted></video>
+				<video id="incoming-video" className="video-display" poster={videoPoster} autoPlay></video>
 			</div>
 
 			<div id="message-displays-container">
@@ -20,5 +21,8 @@ function Main(){
 		</div>
 	)
 }
+
+
+
 
 export default Main
