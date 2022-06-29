@@ -9,6 +9,11 @@ PeerRTC is packed with easy to call api for sending raw text, sending raw files,
 * Source code contributions and bug reports are encouraged.
 
 ## 📖 Sample Project
+**Random Chat Site**
+* [Website](https://PeerRTC.github.io/PeerRTC/test/Random%20Chat%20Site/random-chat-app/build/index.html) 
+* [Source Code](https://github.com/PeerRTC/PeerRTC/tree/master/test/Random%20Chat%20Site/random-chat-app)
+<br/>
+
 **Video Call and File Sharing Site**
 * [Website](https://PeerRTC.github.io/PeerRTC/test/Video%20call%20with%20file%20sharing/index.html) 
 * [Source Code](https://github.com/PeerRTC/PeerRTC/tree/master/test/Video%20call%20with%20file%20sharing)
