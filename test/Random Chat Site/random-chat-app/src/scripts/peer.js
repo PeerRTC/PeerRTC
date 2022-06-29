@@ -171,10 +171,7 @@ export const startSearching = ()=>{
 	stopFuncCalled = false
 	console.log("Searching")
 	peer.onpeerpayloads = payloads =>{
-  	if (!isAvailable()) {
-  		console.log(metadaSet)
-  		return
-  	}
+  	if (!isAvailable()) return
 
   	console.log(payloads)
 
