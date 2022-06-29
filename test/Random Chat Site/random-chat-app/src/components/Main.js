@@ -7,23 +7,29 @@ var peerFunc = {}
 function Main(props){
 	peerFunc = props.peerFunc
 	return (
-		<div id="main-container">
-			<div id="video-displays-container">
-				<video id="my-video" className="video-display" poster={videoPoster} autoPlay muted></video>
-				<video id="incoming-video" className="video-display" poster={videoPoster} autoPlay></video>
-			</div>
+		<div  id="main-container">
+			<header id="main-header">
+				<h1 id="heading-title">💖 Simple Random Chat</h1>
+			</header>
 
-			<div id="message-displays-container">
-				<div id="connected-to-peer-indicator">Connected to a stranger</div>
-				<div id="message-box-display"></div>
-				<div id="send-message-container">
-					<button id="start-bttn" onClick={()=>{startSearching()}}>Start</button>
-					<button id="end-bttn" onClick={()=>{stop()}}>Stop</button>
-					<button id="skip-bttn" onClick={()=>{skip()}}>Skip</button>
-					<input id="message-box-input" type="text"/>
-					<button id="send-message-bttn" onClick={()=>{sendMessage()}}>Send</button>
-					<img id="attach-file-bttn" src={attachFileIcon} onClick={()=>{sendFile()}}></img>
-					<input id="upload-file-chooser" type="file" accept="image/*" onChange={()=>{sendImage()}}></input>
+			<div id="main-content-container">
+				<div id="video-displays-container">
+					<video id="my-video" className="video-display" poster={videoPoster} autoPlay muted></video>
+					<video id="incoming-video" className="video-display" poster={videoPoster} autoPlay></video>
+				</div>
+
+				<div id="message-displays-container">
+					<div id="connected-to-peer-indicator">Connected to a stranger 🔥</div>
+					<div id="message-box-display"></div>
+					<div id="send-message-container">
+						<button id="start-bttn" onClick={()=>{startSearching()}}>Start</button>
+						<button id="end-bttn" onClick={()=>{stop()}}>Stop</button>
+						<button id="skip-bttn" onClick={()=>{skip()}}>Skip</button>
+						<input id="message-box-input" type="text"/>
+						<button id="send-message-bttn" onClick={()=>{sendMessage()}}>Send</button>
+						<img id="attach-file-bttn" src={attachFileIcon} onClick={()=>{sendFile()}}></img>
+						<input id="upload-file-chooser" type="file" accept="image/*" onChange={()=>{sendImage()}}></input>
+					</div>
 				</div>
 			</div>
 		</div>
