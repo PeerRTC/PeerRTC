@@ -182,8 +182,9 @@ class PeerRTC {
 			})
 		}
 
-		if (this.currentPeerId) {
-			this.#browserRTC.onclose = connect
+		const browserRTC = this.#browserRTC
+		if ((this.currentPeerId && browserRTC) || browserRTC) {
+			browserRTC.onclose = connect
 			this.closeP2P()
 		} else{
 			connect()
@@ -401,15 +402,25 @@ class PeerRTC {
 		} else if(jsonData.type == PeerRTC.#RES_TYPE_INCOMING_PEER){
 			const peerId = jsonData.fromId
 			const accept = ()=>{
-				this.#initBrowserRTC(jsonData.fromId, false, jsonData.sdp, (iceCandidates, sdp)=>{
-					this.#browserRTC.addIceCandidates(jsonData.iceCandidates)
-					this.#socket.send(JSON.stringify({
-						"type": PeerRTC.#REQ_TYPE_ANSWER_PEER,
-						"peerId": peerId,
-						"iceCandidates": iceCandidates,
-						"sdp": sdp
-					}))
-				})
+				const connect = ()=>{
+						this.#initBrowserRTC(jsonData.fromId, false, jsonData.sdp, (iceCandidates, sdp)=>{
+						this.#browserRTC.addIceCandidates(jsonData.iceCandidates)
+						this.#socket.send(JSON.stringify({
+							"type": PeerRTC.#REQ_TYPE_ANSWER_PEER,
+							"peerId": peerId,
+							"iceCandidates": iceCandidates,
+							"sdp": sdp
+						}))
+					})
+				}
+
+				const browserRTC = this.#browserRTC
+				if ((this.currentPeerId && browserRTC) || browserRTC) {
+					browserRTC.onclose = connect
+					this.closeP2P()
+				} else{
+					connect()
+				}
 			}
 
 
@@ -421,11 +432,16 @@ class PeerRTC {
 			
 			}
 			
-
-			const onpeerconnectrequest = this.onpeerconnectrequest
-			if (onpeerconnectrequest ) {
-				onpeerconnectrequest(peerId, accept, decline)
+			//connecting to self not allowed
+			if (peerId == this.id){
+				decline()
+			} else{
+				const onpeerconnectrequest = this.onpeerconnectrequest
+				if (onpeerconnectrequest ) {
+					onpeerconnectrequest(peerId, accept, decline)
+				}
 			}
+			
 			
 		}
 

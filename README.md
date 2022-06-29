@@ -359,8 +359,7 @@ method to prevent idling problems in server. <br/>
 ```
   peer.connect(peerId)
 ```
-* Used for connecting with other peer ids. This method will throw an error if there are still existing connection
-with other peers.  <br/>
+* Used for connecting with other peer ids. The `onpeerconnectdecline` listener will be called if trying to connect on own id. <br/>
 
 `peerId` : `string`
 * Peer id wanted to connect with. <br/>
