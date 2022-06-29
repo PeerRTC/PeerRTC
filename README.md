@@ -9,6 +9,8 @@ PeerRTC is packed with easy to call api for sending raw text, sending raw files,
 * Source code contributions and bug reports are encouraged.
 
 ## 📖 Sample Project
+Using the sample sites below can be unstable since it uses github. It is adviseable to download the source code
+and run it on your own machine. <br/><br/>
 **Random Chat Site**
 * [Website](https://PeerRTC.github.io/PeerRTC/test/Random%20Chat%20Site/random-chat-app/build/index.html) 
 * [Source Code](https://github.com/PeerRTC/PeerRTC/tree/master/test/Random%20Chat%20Site/random-chat-app)
