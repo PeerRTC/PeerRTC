@@ -1,0 +1,186 @@
+body, html{
+ 	 margin:0;
+ 	 background-color: #cfcfcf;
+ 	 font-family: "Open Sans", sans-serif;
+ }
+
+
+
+
+#main-container{
+	position: absolute;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	width: 100%;
+}
+
+
+#heading-title{
+	margin: 0;
+	color: white;
+}
+
+#main-header{;
+	padding: 20px;
+	height: 10%;
+	background-color: #e02686;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+
+
+#main-content-container{
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	height: 90%;
+}
+
+#video-displays-container{
+	display: flex;
+	flex-direction: column;
+	margin: 20px 0 20px 20px;
+	width: 40%;
+}
+
+
+#message-displays-container{
+	display: flex;
+	flex-direction: column;
+	width: 60%;
+	margin: 20px;
+	padding: 30px;
+	border-radius: 10px;
+	background-color: #ffffff;
+}
+
+.video-display{
+	object-fit: cover;
+	width: 100%;
+	height: 49%;
+	margin-bottom: 2%;
+	border-radius: 10px;
+	transform: scale(-1,1);
+	-webkit-transform: scale(-1, 1)
+}
+
+
+
+#send-message-container{
+	margin-top: 20px;
+	height: 10%;
+	width: 100%;
+	display: flex;
+	overflow: hidden;
+}
+
+
+#message-box-display{
+	margin-top: 20px;
+	height: 90%;
+	overflow-y: scroll;
+	display: flex;
+	flex-direction: column;
+}
+
+
+
+#message-box-input{
+	padding: 10px;
+	margin: 0;
+	flex-grow: 10;
+	font-size: 17px;
+	margin-left: 10px;
+	margin-right: 10px;
+	border-radius: 20px;
+}
+
+#send-message-bttn, #end-bttn, #start-bttn, #skip-bttn{
+	flex-grow: 2;
+
+}
+
+#end-bttn, #skip-bttn {
+	display: none;
+	margin-left: 5px;
+}
+
+#upload-file-chooser{
+	display: none;
+}
+
+
+.message-img-display{
+	object-fit: contain;
+	margin: 5px;
+	width: 200px;
+	height: 200px;
+}
+
+
+
+
+.message-text-display{
+	font-size: 20px;
+	padding: 10px;
+	border-radius: 18px;
+	max-width: 50%;
+	flex-wrap: wrap;
+	overflow-wrap: break-word;
+	margin: 5px;
+}
+
+
+.my-message-text-display, .my-message-img-display{
+	margin-left: auto;
+	margin-right: 20px;
+}
+
+
+.incoming-message-text-display, .incoming-message-img-display{
+	margin-left: 20px;
+	margin-right: auto;
+}
+
+
+.incoming-message-text-display{
+	background: #f2f4f7;
+}
+
+.my-message-text-display{
+	background: #f03c8a;
+	color: white;
+}
+
+#connected-to-peer-indicator{
+	visibility: hidden;
+	font-size: 25px;
+	font-weight: bold;
+}
+
+
+button{
+	background-color: #e02686;
+	border-radius: 10px;
+	border: none;
+	color: white;
+	font-size: 16px;
+	font-weight: bold;
+}
+
+button:hover{
+	background-color: #de5da0;
+}
+
+
+#attach-file-bttn{
+	margin-left: 5px;	
+}
+
+#attach-file-bttn:hover{
+	background: #d6ced2;
+
+}
