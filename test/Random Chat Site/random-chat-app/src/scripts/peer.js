@@ -118,10 +118,10 @@ export const startPeer =  (stream)=>{
 	document.getElementById("my-video").srcObject = stream
 
 	/* eslint-disable */
-	peer = new PeerRTC("http://127.0.0.1:1000", {})
+	peer = new PeerRTC()
 	/* eslint-enable */
 	peer.setMediaStream(stream)
-	peer.start(false, onConnected)
+	peer.start(true, onConnected)
 }
 
 
@@ -171,7 +171,10 @@ export const startSearching = ()=>{
 	stopFuncCalled = false
 	console.log("Searching")
 	peer.onpeerpayloads = payloads =>{
-  	if (!isAvailable()) return
+  	if (!isAvailable()) {
+  		console.log(metadaSet)
+  		return
+  	}
 
   	console.log(payloads)
 
