@@ -121,6 +121,7 @@ export const startPeer =  (stream)=>{
 	peer = new PeerRTC()
 	/* eslint-enable */
 	peer.setMediaStream(stream)
+	peer.ping(10000)
 	peer.start(true, onConnected)
 }
 
