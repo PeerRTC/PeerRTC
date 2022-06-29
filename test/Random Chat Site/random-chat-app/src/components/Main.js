@@ -14,14 +14,15 @@ function Main(props){
 			</div>
 
 			<div id="message-displays-container">
-				<p id="message-box-display"></p>
+				<div id="message-box-display"></div>
 				<div id="send-message-container">
 					<button id="start-bttn" onClick={()=>{startSearching()}}>Start</button>
 					<button id="end-bttn" onClick={()=>{stop()}}>Stop</button>
 					<button id="skip-bttn" onClick={()=>{skip()}}>Skip</button>
 					<input id="message-box-input" type="text"/>
 					<button id="send-message-bttn" onClick={()=>{sendMessage()}}>Send</button>
-					<img id="attach-file-bttn" src={attachFileIcon}></img>
+					<img id="attach-file-bttn" src={attachFileIcon} onClick={()=>{sendFile()}}></img>
+					<input id="upload-file-chooser" type="file" accept="image/*" onChange={()=>{sendImage()}}></input>
 				</div>
 			</div>
 		</div>
@@ -63,6 +64,22 @@ function messageContainerButtonsVisibility(isStartVisible, isStopVisible, isSkip
 	document.getElementById("start-bttn").style.visibility = isVisible(isStartVisible)
 	document.getElementById("end-bttn").style.visibility = isVisible(isStopVisible)
 	document.getElementById("skip-bttn").style.visibility = isVisible(isSkipVisible)
+}
+
+
+function sendFile(){
+	document.getElementById("upload-file-chooser").click()
+}
+
+function sendImage() {
+	const file = document.getElementById("upload-file-chooser").files[0]
+	peerFunc.sendFile(file)
+	const reader = new FileReader()
+	reader.onload = e=>{
+		peerFunc.displayImageMessage(new Blob([new Uint8Array(e.target.result)]))
+	}
+	reader.readAsArrayBuffer(file)
+	
 }
 
 

@@ -44,7 +44,9 @@ body, html{
 #message-box-display{
 	margin: 0;
 	height: 90%;
-	display: ;
+	overflow-y: scroll;
+	display: flex;
+	flex-direction: column;
 }
 
 
@@ -67,4 +69,19 @@ body, html{
 
 #end-bttn,  #skip-bttn{
 	visibility: hidden;
+}
+
+#upload-file-chooser{
+	display: none;
+}
+
+
+.message-img-display{
+	object-fit: contain;
+	width: 150px;
+	height: 150px;
+}
+
+.message-text-display{
+
 }

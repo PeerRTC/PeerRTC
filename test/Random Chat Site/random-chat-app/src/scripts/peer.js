@@ -24,6 +24,7 @@ const onConnected =p=>{
   p.oncloseP2P = ()=>{
   	incomingVideoHTML.srcObject = null
   	messageBoxHTML.innerText = null
+  	p.deleteAllBlobFiles()
   	document.getElementById("skip-bttn").style.visibility = "hidden"
 
   	if (isAvailable() || !stopFuncCalled) {
@@ -34,7 +35,7 @@ const onConnected =p=>{
 
   p.onClose = ()=>{
   	incomingVideoHTML.srcObject = null
-  	messageBoxHTML.innerText = null
+  	messageBoxHTML.innerHTML = null
   	metadaSet = false
   	isSearching = false
   }
@@ -77,6 +78,23 @@ const onConnected =p=>{
   	appendMessage(false, message)
   }
 
+  p.onfilemessage = (fname, fileTotalSize, fileBytesArray, done)=>{
+		try{
+			p.updateBlob(fname, fileBytesArray)
+		}catch(e){
+			// memory error
+		}
+
+		if (done) {
+  		const blob = p.getBlob(fname)
+  		p.deleteBlob(fname)
+  		displayImageMessage(blob)
+  		
+  	}
+
+  	
+  }
+
    p.onnewpayload  = payload=>{
    	const jsonPayload = JSON.parse(payload)
    	if (jsonPayload.identity == identity) {
@@ -103,9 +121,23 @@ export const startPeer =  (stream)=>{
 }
 
 
-export const sendMessage = (message)=>{
+export const sendMessage = message=>{
 	appendMessage(true, message)
 	peer.sendText(message)
+}
+
+
+export const sendFile = file=>{
+	peer.sendFile(file.name, file)
+}
+
+
+export const displayImageMessage= blob=>{
+	const url = window.URL || window.webkitURL
+	const imgMessage = document.createElement("img")
+	imgMessage.src = url.createObjectURL(blob)
+	imgMessage.className = "message-img-display"
+	document.getElementById("message-box-display").appendChild(imgMessage)
 }
 
 
@@ -172,7 +204,10 @@ function appendMessage(isSender, message, restart){
 			owner = "Other:"
 		}
 
-		messageBoxHTML.innerText += `${owner} ${message}\n`
+		const messageDiv = document.createElement("div")
+		messageDiv.innerText = `${owner} ${message}\n`
+		messageDiv.className = "message-text-display"
+		messageBoxHTML.appendChild(messageDiv)
 	}
 	
 }
