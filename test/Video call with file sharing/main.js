@@ -3,7 +3,7 @@ const receivingFiles = new Map()
 
 
 // null means using the default server hosted by us (adviseable to use your own)
-const serverURL = "http://127.0.0.1:1000"	
+const serverURL = null
 
 //used in web's RTCPeerConnection as found here - https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/RTCPeerConnection
 const configurations = null
@@ -11,7 +11,7 @@ const configurations = null
 
 peer = new PeerRTC(serverURL, configurations)
 peer.pingServer(10000)
-peer.start( false, p=>{
+peer.start( true, p=>{
 	document.getElementById("peer-id").innerHTML = "My Id: " + p.id
 
 	p.ontextmessage = (m)=>{
