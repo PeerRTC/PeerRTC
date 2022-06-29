@@ -1,12 +1,19 @@
 var peer = null
 var isSearching = false
 var metadaSet = false
+var stopFuncCalled = true
+
+// prevent waiting for other peer for so long to accept request
+const MIN_PEER_CONNECT_WAITING_TIME = 1000
+const MAX_PEER_CONNECT_WAITING_TIME = 5000
 
 
 // Since we are using default servers, this serves as an identity for clients created from this specific project.
 const identity = "random_chat123124"
 
-var onConnected =p=>{
+
+
+const onConnected =p=>{
 	const incomingVideoHTML = document.getElementById("incoming-video")
 	const messageBoxHTML = document.getElementById("message-box-display")
   
@@ -17,9 +24,12 @@ var onConnected =p=>{
   p.oncloseP2P = ()=>{
   	incomingVideoHTML.srcObject = null
   	messageBoxHTML.innerText = null
-  	if (isSearching) {
+  	document.getElementById("skip-bttn").style.visibility = "hidden"
+
+  	if (isAvailable() || !stopFuncCalled) {
   		startSearching()
   	}
+
   }
 
   p.onClose = ()=>{
@@ -29,39 +39,48 @@ var onConnected =p=>{
   	isSearching = false
   }
 
-  p.ontextmessage = message=>{
-  	appendMessage(false, message)
-  }
-
+ 
 
   p.onpeerconnectsuccess  = ()=>{
   	isSearching = false
+  	appendMessage(null, null, true)
+  	document.getElementById("skip-bttn").style.visibility = "visible"
   	console.log("Connected to peer")
   }
 
 
   p.onpeerconnectrequest = (peerId, accept, decline)=>{
+  	console.log("Connection request")
   	if (isAvailable()) {
   		accept()
 			isSearching = false
+			setTimeout(()=>{
+				if (!stopFuncCalled && !isSearching && !peer.currentPeerId){
+					startSearching()
+				}
+			}, random(MIN_PEER_CONNECT_WAITING_TIME, MAX_PEER_CONNECT_WAITING_TIME))
   	} else{
   		console.log("Declined")
   		decline()
   	}
   }
 
-  p.onpeerconnectdecline = ()=>{
+  p.onpeerconnectdecline = peerId=>{
   	if (isAvailable()) {
   		startSearching()
-  		console.log("A")
+  		console.log("Connection request decline by " + peerId)
   	}
+  }
+
+
+  p.ontextmessage = message=>{
+  	appendMessage(false, message)
   }
 
    p.onnewpayload  = payload=>{
    	const jsonPayload = JSON.parse(payload)
    	if (jsonPayload.identity == identity) {
    		metadaSet = true
-   		startSearching()
    	}
   }
 
@@ -73,7 +92,7 @@ var onConnected =p=>{
   console.log(p.id)
 }
 
-function startPeer(stream){
+export const startPeer =  (stream)=>{
 	document.getElementById("my-video").srcObject = stream
 
 	/* eslint-disable */
@@ -84,20 +103,21 @@ function startPeer(stream){
 }
 
 
-function sendMessage(message){
+export const sendMessage = (message)=>{
 	appendMessage(true, message)
 	peer.sendText(message)
 }
 
 
-function startSearching() {
-	isSearching = true
 
+export const startSearching = ()=>{
+	isSearching = true
+	stopFuncCalled = false
 	console.log("Searching")
 	peer.onpeerpayloads = payloads =>{
-  	if (!isAvailable) return
+  	if (!isAvailable()) return
 
-  	console.log("peer payloads")
+  	console.log(payloads)
 
   	const validPeers = []
   	const myId = peer.id
@@ -113,36 +133,50 @@ function startSearching() {
   		const peerId = validPeers[random(0, validPeers.length)].id
   		peer.connect(peerId)
   		setTimeout(()=>{
-  			if (!peer.currentPeerId) {
+  			if (isAvailable()) {
   				startSearching()
   			}
-  		}, random(1000,2000))
+  		}, random(MIN_PEER_CONNECT_WAITING_TIME, MAX_PEER_CONNECT_WAITING_TIME))
   		console.log("Connecting to peer: " + peerId)
   	} else if (isSearching) {
   		console.log("Is searchng")
-  		setTimeout(()=>{
-  			startSearching()
-  		}, random(500,2000))
+  		startSearching()
   	}
   	
   }
 
-  if(isAvailable) peer.getAllPeerPayloads()
+  // get all available peers to connect 
+  peer.getAllPeerPayloads()
 }
 
-function stopSearching() {
+export const stop = ()=>{
 	isSearching = false
+	stopFuncCalled = true
+	peer.closeP2P()
 }
 
-function appendMessage(isSender, message){
+
+export const skip =()=>{
+	isSearching = true
+	peer.closeP2P()
+}
+
+function appendMessage(isSender, message, restart){
 	const messageBoxHTML = document.getElementById("message-box-display")
-	var owner = "Me:"
-	if (!isSender) {
-		owner = "Other:"
-	}
 
-	messageBoxHTML.innerText += `${owner} ${message}\n`
+	if (restart) {
+		messageBoxHTML.innerText = "Connected to a stranger.\n"
+	} else{
+		var owner = "Me:"
+		if (!isSender) {
+			owner = "Other:"
+		}
+
+		messageBoxHTML.innerText += `${owner} ${message}\n`
+	}
+	
 }
+
 
 
 function isAvailable() {
@@ -153,7 +187,3 @@ function random(from, to){
 	return Math.floor(Math.random() * to) + from
 }
 
-module.exports = {
-	startPeer:startPeer,
-	sendMessage: sendMessage
-}

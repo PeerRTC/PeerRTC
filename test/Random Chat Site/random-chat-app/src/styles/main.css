@@ -44,6 +44,7 @@ body, html{
 #message-box-display{
 	margin: 0;
 	height: 90%;
+	display: ;
 }
 
 
@@ -51,11 +52,19 @@ body, html{
 }
 
 #send-message-bttn{
-	flex-grow:  3;
+	flex-grow:  2;
 }
 
 #message-box-input{
 	padding: 0;
 	margin: 0;
-	width: 80%;
+	flex-grow: 10;
+}
+
+#end-bttn, #start-bttn, #skip-bttn{
+	flex-grow: 2;
+}
+
+#end-bttn,  #skip-bttn{
+	visibility: hidden;
 }

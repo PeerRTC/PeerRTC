@@ -2,17 +2,23 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import Main from "./components/Main.js"
 import "./styles/main.css"
-const Peer = require("./scripts/peer.js")
+import {startPeer, sendMessage, startSearching, stop, skip} from "./scripts/peer.js"
 
 
+const peerFunc = {
+  sendMessage:sendMessage,
+  startSearching:startSearching,
+  stop:stop,
+  skip:skip
+}
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<Main/>);
+root.render(<Main peerFunc={peerFunc}/>);
 
 
 
-navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(stream=>{
-  Peer.startPeer(stream)
+navigator.mediaDevices.getUserMedia({audio:false, video:true}).then(stream=>{
+  startPeer(stream)
 }).catch(e=>{
   alert(e)
 })
