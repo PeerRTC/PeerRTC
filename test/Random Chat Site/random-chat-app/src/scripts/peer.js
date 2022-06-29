@@ -25,8 +25,8 @@ const onConnected =p=>{
   	incomingVideoHTML.srcObject = null
   	messageBoxHTML.innerText = null
   	p.deleteAllBlobFiles()
-  	document.getElementById("skip-bttn").style.visibility = "hidden"
-
+  	document.getElementById("skip-bttn").style.display = "none"
+  	document.getElementById("connected-to-peer-indicator").style.visibility = "hidden"
   	if (isAvailable() || !stopFuncCalled) {
   		startSearching()
   	}
@@ -38,14 +38,18 @@ const onConnected =p=>{
   	messageBoxHTML.innerHTML = null
   	metadaSet = false
   	isSearching = false
+  	document.getElementById("connected-to-peer-indicator").style.visibility = "hidden"
   }
 
  
 
   p.onpeerconnectsuccess  = ()=>{
   	isSearching = false
+  	messageBoxHTML.innerHTML = null
   	appendMessage(null, null, true)
-  	document.getElementById("skip-bttn").style.visibility = "visible"
+  	document.getElementById("message-displays-container").style.visibility = "visible"
+  	document.getElementById("skip-bttn").style.display = "block"
+  	document.getElementById("connected-to-peer-indicator").style.visibility = "visible"
   	console.log("Connected to peer")
   }
 
@@ -88,7 +92,7 @@ const onConnected =p=>{
 		if (done) {
   		const blob = p.getBlob(fname)
   		p.deleteBlob(fname)
-  		displayImageMessage(blob)
+  		displayImageMessage(false, blob)
   		
   	}
 
@@ -122,22 +126,42 @@ export const startPeer =  (stream)=>{
 
 
 export const sendMessage = message=>{
-	appendMessage(true, message)
 	peer.sendText(message)
+	appendMessage(true, message)	
 }
 
 
 export const sendFile = file=>{
-	peer.sendFile(file.name, file)
+	const splitted = file.name.split(".")
+	var fname = `${Date.now()}`
+	const ext = splitted[1]
+
+	if (ext) {
+		fname+=`.${ext}`
+	}
+	
+	peer.sendFile(fname, file)
 }
 
 
-export const displayImageMessage= blob=>{
+export const displayImageMessage= (isSender, blob)=>{
 	const url = window.URL || window.webkitURL
 	const imgMessage = document.createElement("img")
 	imgMessage.src = url.createObjectURL(blob)
-	imgMessage.className = "message-img-display"
+
+	var className = "incoming-message-img-display"
+	if (isSender) {
+		className = "my-message-img-display"
+	}
+
+	imgMessage.className = `${className} message-img-display`
 	document.getElementById("message-box-display").appendChild(imgMessage)
+
+	const messageBoxHTML = document.getElementById("messageBoxHTML")
+	const scrollOffset = 10
+	if (isSender || messageBoxHTML.scrollHeight - messageBoxHTML.offsetHeight - scrollOffset >= messageBoxHTML.scrollTop) {
+		scrollMessageToEnd()
+	} 
 }
 
 
@@ -193,25 +217,35 @@ export const skip =()=>{
 	peer.closeP2P()
 }
 
-function appendMessage(isSender, message, restart){
-	const messageBoxHTML = document.getElementById("message-box-display")
-
-	if (restart) {
-		messageBoxHTML.innerText = "Connected to a stranger.\n"
-	} else{
-		var owner = "Me:"
+function appendMessage(isSender, message){
+	if (message && message.trim() != "") {
+		const messageBoxHTML = document.getElementById("message-box-display")
+		var className = "my-message-text-display"
 		if (!isSender) {
-			owner = "Other:"
+			className = "incoming-message-text-display"
 		}
 
-		const messageDiv = document.createElement("div")
-		messageDiv.innerText = `${owner} ${message}\n`
-		messageDiv.className = "message-text-display"
+		const messageDiv = document.createElement("text")
+		messageDiv.innerText = `${message}\n`
+		messageDiv.className = `${className} message-text-display`
 		messageBoxHTML.appendChild(messageDiv)
+
+		const scrollOffset = 10
+		if (isSender || messageBoxHTML.scrollHeight - messageBoxHTML.offsetHeight - scrollOffset >= messageBoxHTML.scrollTop) {
+			scrollMessageToEnd()
+		} 
 	}
+	
 	
 }
 
+
+function scrollMessageToEnd() {
+	setTimeout(()=>{
+		const messageBoxHTML = document.getElementById("message-box-display")
+		messageBoxHTML.scrollTo(0, messageBoxHTML.scrollHeight)
+	}, 100)
+}
 
 
 function isAvailable() {

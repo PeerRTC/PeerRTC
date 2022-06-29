@@ -14,6 +14,7 @@ function Main(props){
 			</div>
 
 			<div id="message-displays-container">
+				<div id="connected-to-peer-indicator">Connected to a stranger</div>
 				<div id="message-box-display"></div>
 				<div id="send-message-container">
 					<button id="start-bttn" onClick={()=>{startSearching()}}>Start</button>
@@ -56,14 +57,14 @@ function stop(){
 function messageContainerButtonsVisibility(isStartVisible, isStopVisible, isSkipVisible){
 	const isVisible = visible=>{
 		if (visible) {
-			return "visible"
+			return "block"
 		} else{
-			return "hidden"
+			return "none"
 		}
 	}
-	document.getElementById("start-bttn").style.visibility = isVisible(isStartVisible)
-	document.getElementById("end-bttn").style.visibility = isVisible(isStopVisible)
-	document.getElementById("skip-bttn").style.visibility = isVisible(isSkipVisible)
+	document.getElementById("start-bttn").style.display = isVisible(isStartVisible)
+	document.getElementById("end-bttn").style.display = isVisible(isStopVisible)
+	document.getElementById("skip-bttn").style.display = isVisible(isSkipVisible)
 }
 
 
@@ -73,10 +74,11 @@ function sendFile(){
 
 function sendImage() {
 	const file = document.getElementById("upload-file-chooser").files[0]
+	document.getElementById("upload-file-chooser").value = null
 	peerFunc.sendFile(file)
 	const reader = new FileReader()
 	reader.onload = e=>{
-		peerFunc.displayImageMessage(new Blob([new Uint8Array(e.target.result)]))
+		peerFunc.displayImageMessage(true, new Blob([new Uint8Array(e.target.result)]))
 	}
 	reader.readAsArrayBuffer(file)
 	

@@ -1,10 +1,11 @@
 body, html{
  	 margin:0;
+ 	 background-color: #c8c4c4;
+ 	 font-family: "Open Sans", sans-serif;
  }
 
 #main-container{
 	position: absolute;
-	background: red;
 	display: flex;
 	flex-direction: row;
 	height: 100%;
@@ -14,35 +15,42 @@ body, html{
 #video-displays-container{
 	display: flex;
 	flex-direction: column;
-	background: darkred;
+	margin: 20px 0 20px 20px;
 	width: 40%;
 }
 
 
 #message-displays-container{
-	background: beige;
 	display: flex;
 	flex-direction: column;
 	width: 60%;
+	margin: 20px;
+	padding: 30px;
+	border-radius: 10px;
+	background-color: #ffffff;
 }
 
 .video-display{
 	object-fit: cover;
 	width: 100%;
-	height: 50%;
+	height: 49%;
+	margin-bottom: 2%;
+	border-radius: 10px;
 }
 
+
+
 #send-message-container{
-	background: green;
 	margin-top: 20px;
 	height: 10%;
+	width: 100%;
 	display: flex;
-	flex-direction: row;
+	overflow: hidden;
 }
 
 
 #message-box-display{
-	margin: 0;
+	margin-top: 20px;
 	height: 90%;
 	overflow-y: scroll;
 	display: flex;
@@ -50,25 +58,25 @@ body, html{
 }
 
 
-#attach-file-bttn{
-}
-
-#send-message-bttn{
-	flex-grow:  2;
-}
 
 #message-box-input{
-	padding: 0;
+	padding: 10px;
 	margin: 0;
 	flex-grow: 10;
+	font-size: 17px;
+	margin-left: 10px;
+	margin-right: 10px;
+	border-radius: 20px;
 }
 
-#end-bttn, #start-bttn, #skip-bttn{
+#send-message-bttn, #end-bttn, #start-bttn, #skip-bttn{
 	flex-grow: 2;
+
 }
 
-#end-bttn,  #skip-bttn{
-	visibility: hidden;
+#end-bttn, #skip-bttn, #start-bttn{
+	display: none;
+	margin-left: 5px;
 }
 
 #upload-file-chooser{
@@ -78,10 +86,72 @@ body, html{
 
 .message-img-display{
 	object-fit: contain;
-	width: 150px;
-	height: 150px;
+	margin: 5px;
+	width: 200px;
+	height: 200px;
 }
 
+
+
+
 .message-text-display{
+	font-size: 20px;
+	padding: 10px;
+	border-radius: 18px;
+	max-width: 50%;
+	flex-wrap: wrap;
+	overflow-wrap: break-word;
+	margin: 5px;
+}
+
+
+.my-message-text-display, .my-message-img-display{
+	margin-left: auto;
+	margin-right: 20px;
+}
+
+
+.incoming-message-text-display, .incoming-message-img-display{
+	margin-left: 20px;
+	margin-right: auto;
+}
+
+
+.incoming-message-text-display{
+	background: #f2f4f7;
+}
+
+.my-message-text-display{
+	background: #f03c8a;
+	color: white;
+}
+
+#connected-to-peer-indicator{
+	visibility: hidden;
+	font-size: 25px;
+	font-weight: bold;
+}
+
+
+button{
+	background-color: #e02686;
+	border-radius: 10px;
+	border: none;
+	color: white;
+	font-size: 16px;
+	font-weight: bold;
+}
+
+button:hover{
+	background-color: #de5da0;
+}
+
+
+#attach-file-bttn{
+	margin-left: 5px;	
+}
+
+#attach-file-bttn:hover{
+	background: #d6ced2;
 
 }

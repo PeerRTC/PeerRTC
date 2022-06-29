@@ -19,7 +19,7 @@ root.render(<Main peerFunc={peerFunc}/>);
 
 
 
-navigator.mediaDevices.getUserMedia({audio:false, video:true}).then(stream=>{
+navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(stream=>{
   startPeer(stream)
 }).catch(e=>{
   alert(e)
